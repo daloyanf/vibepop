@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand / Primary Colors -->
+    <color name="primary">#0A84FF</color>
+    <color name="primary_dark">#0066CC</color>
+    <color name="accent">#30D158</color>
+
+    <!-- Backgrounds -->
+    <color name="bg_app">#0D1117</color>
+    <color name="bg_card_dark">#161B22</color>
+    <color name="bg_card_light">#F5F5F7</color>
+    <color name="bg_popup_card">#FAFAFC</color>
+    <color name="bg_popup_card_dark">#1C1C1E</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#8B949E</color>
+    <color name="text_popup_title">#111827</color>
+    <color name="text_popup_subtitle">#6B7280</color>
+    <color name="text_popup_battery">#374151</color>
+
+    <!-- Battery status colors -->
+    <color name="battery_green">#34C759</color>
+    <color name="battery_yellow">#FFCC00</color>
+    <color name="battery_red">#FF3B30</color>
+    <color name="battery_track">#E5E7EB</color>
+    <color name="battery_charging_icon">#34C759</color>
+
+    <!-- Glass & Border -->
+    <color name="popup_border">#E2E8F0</color>
+    <color name="popup_pill_bar">#D1D5DB</color>
+    <color name="btn_secondary_bg">#F3F4F6</color>
+    <color name="btn_secondary_text">#1F2937</color>
+    <color name="status_connected">#10B981</color>
+    <color name="status_disconnected">#9CA3AF</color>
+    <color name="status_warning">#FF9F0A</color>
+    <color name="card_stroke">#30363D</color>
+    <color name="card_stroke_active">#0A84FF</color>
+    <color name="card_selected_bg">#1A2636</color>
+    <color name="bg_nav">#161B22</color>
+</resources>

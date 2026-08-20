@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 弹窗进出场丝滑动画 -->
+    <style name="PopupAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_down_out</item>
+    </style>
+
+    <!-- 淡入淡出动画备选 -->
+    <style name="PopupFadeAnimation">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <!-- 圆角卡片样式 -->
+    <style name="CardViewStyle" parent="CardView">
+        <item name="cardCornerRadius">28dp</item>
+        <item name="cardElevation">16dp</item>
+        <item name="cardMaxElevation">20dp</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardUseCompatPadding">false</item>
+    </style>
+</resources>

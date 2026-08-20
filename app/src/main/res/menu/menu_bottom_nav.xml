@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@drawable/ic_nav_dashboard"
+        android:title="控制台" />
+
+    <item
+        android:id="@+id/nav_themes"
+        android:icon="@drawable/ic_nav_palette"
+        android:title="动效工坊" />
+
+    <item
+        android:id="@+id/nav_devices"
+        android:icon="@drawable/ic_nav_devices"
+        android:title="设备管理" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_nav_settings"
+        android:title="设置/权限" />
+</menu>

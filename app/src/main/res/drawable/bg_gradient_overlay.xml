@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- 极细腻景深渐变，增强文字可读性同时保证动画满铺透亮 -->
+    <gradient
+        android:angle="270"
+        android:startColor="#4D000000"
+        android:centerColor="#00000000"
+        android:endColor="#66000000" />
+</shape>

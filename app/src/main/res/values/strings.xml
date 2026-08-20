@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">VibePop</string>
+    <string name="service_notification_title">VibePop 蓝牙耳机弹窗服务运行中</string>
+    <string name="service_notification_desc">正在后台监听蓝牙耳机连接状态…</string>
+
+    <!-- UI Strings -->
+    <string name="service_status_running">后台监听服务：运行中</string>
+    <string name="service_status_stopped">后台监听服务：已停止</string>
+    <string name="btn_start_service">启动监听服务</string>
+    <string name="btn_stop_service">停止监听服务</string>
+    <string name="btn_test_popup">立即模拟弹窗 (预览动效)</string>
+
+    <!-- Permissions -->
+    <string name="perm_overlay_title">悬浮窗权限 (必需)</string>
+    <string name="perm_overlay_desc">用于在任意界面底部展示耳机弹窗卡片</string>
+    <string name="perm_bluetooth_title">蓝牙连接权限</string>
+    <string name="perm_bluetooth_desc">用于检测蓝牙耳机连接与电量状态</string>
+    <string name="perm_notification_title">通知权限</string>
+    <string name="perm_notification_desc">保持后台服务常驻，防止被系统清理</string>
+    <string name="btn_grant">去授权</string>
+    <string name="btn_granted">已授权</string>
+
+    <!-- Popup Settings -->
+    <string name="settings_title">弹窗偏好设置</string>
+    <string name="setting_dismiss_delay">自动消退倒计时：%d 秒</string>
+    <string name="setting_device_name">模拟设备名称</string>
+    <string name="setting_theme_selection">选择动效主题</string>
+
+    <!-- Popup Default Texts -->
+    <string name="default_device_name">AirPods Pro 2</string>
+    <string name="status_connected_text">已连接到您的设备</string>
+    <string name="label_left_ear">左耳 (L)</string>
+    <string name="label_right_ear">右耳 (R)</string>
+    <string name="label_case">充电盒 (Case)</string>
+    <string name="btn_popup_done">完成</string>
+    <string name="btn_popup_settings">音频设置</string>
+</resources>

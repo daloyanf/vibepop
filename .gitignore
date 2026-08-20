@@ -1,0 +1,31 @@
+# Gradle and Build Cache
+*.iml
+.gradle/
+/build
+/app/build/
+*/build/
+captures/
+.externalNativeBuild
+.cxx/
+local.properties
+
+# Android Studio / IntelliJ IDEA
+.idea/
+*.ipr
+*.iws
+
+# Output Packages
+*.apk
+*.ap_
+*.aab
+*.dex
+
+# Signing credentials (Private & Local only)
+*.jks
+*.keystore
+keystore.properties
+
+# OS generated
+.DS_Store
+Thumbs.db
+
