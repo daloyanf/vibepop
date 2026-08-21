@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <!-- 纯净深色磨砂卡片背景 (无任何外边框与描边线条) -->
-    <solid android:color="#F2101216" />
+    <!-- 极奢暗黑微光卡片背景 -->
+    <solid android:color="#F210131A" />
+    <stroke
+        android:width="1dp"
+        android:color="#33484F58" />
     <corners
         android:topLeftRadius="28dp"
         android:topRightRadius="28dp"

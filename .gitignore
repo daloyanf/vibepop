@@ -29,3 +29,6 @@ keystore.properties
 .DS_Store
 Thumbs.db
 
+# 根目录录屏与本地大文件
+/*.mp4
+

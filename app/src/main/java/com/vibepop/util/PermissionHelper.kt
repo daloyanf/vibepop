@@ -52,6 +52,37 @@ object PermissionHelper {
     }
 
     /**
+     * 手机系统蓝牙是否处于开启状态
+     */
+    fun isBluetoothEnabled(context: Context): Boolean {
+        return try {
+            val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? android.bluetooth.BluetoothManager
+            @Suppress("DEPRECATION")
+            val adapter = bluetoothManager?.adapter ?: android.bluetooth.BluetoothAdapter.getDefaultAdapter()
+            adapter?.isEnabled == true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /**
+     * 调起系统原生弹窗快速开启蓝牙或跳转至蓝牙设置
+     */
+    fun promptEnableBluetooth(activity: Activity) {
+        try {
+            val enableBtIntent = Intent(android.bluetooth.BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            activity.startActivity(enableBtIntent)
+        } catch (e: Exception) {
+            try {
+                val settingsIntent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
+                activity.startActivity(settingsIntent)
+            } catch (e2: Exception) {
+                // ignore
+            }
+        }
+    }
+
+    /**
      * 请求蓝牙运行时权限
      */
     fun requestBluetoothPermission(activity: Activity, requestCode: Int = 1002) {

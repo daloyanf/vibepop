@@ -23,14 +23,13 @@ jobs:
           fetch-depth: 0
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
 
       - name: Decode Keystore and Configure Signing
-        if: ${{ env.KEYSTORE_BASE64 != '' && env.KEYSTORE_PASSWORD != '' }}
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -57,14 +56,15 @@ jobs:
         run: |
           mkdir -p release_dist
           if [ -f app/build/outputs/apk/release/app-release.apk ]; then
-            cp app/build/outputs/apk/release/app-release.apk release_dist/VibePop-release.apk
+            cp app/build/outputs/apk/release/app-release.apk release_dist/app-release.apk
           fi
+          git log -1 --pretty=format:"%B" > release_dist/RELEASE_NOTES.md
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: VibePop-Release-APK
-          path: release_dist/VibePop-release.apk
+          name: app-release
+          path: release_dist/app-release.apk
           if-no-files-found: warn
 
       - name: Automatically Create GitHub Release
@@ -72,8 +72,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            release_dist/VibePop-release.apk
+            release_dist/app-release.apk
           name: VibePop ${{ github.ref_name }} 正式发布
-          generate_release_notes: true
+          body_path: release_dist/RELEASE_NOTES.md
           draft: false
           prerelease: false

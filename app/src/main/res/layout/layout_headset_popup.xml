@@ -76,52 +76,108 @@
                 android:src="@drawable/ic_pill_bar"
                 android:contentDescription="Drag to dismiss" />
 
-            <!-- 顶部左上角当前蓝牙设备信息 (已去除完成按钮，纯粹沉浸) -->
+            <!-- 顶部信息栏：左侧设备信息与连接状态，右上角真实电量胶囊徽标 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center_vertical"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvDeviceName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:shadowColor="#CC000000"
-                    android:shadowDx="0"
-                    android:shadowDy="2"
-                    android:shadowRadius="6"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    tools:text="AirPods Pro 2" />
-
+                <!-- 左侧设备名与状态 -->
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="6dp"
-                        android:layout_height="6dp"
-                        android:background="@drawable/bg_button_rounded"
-                        android:backgroundTint="#30D158" />
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvConnectionStatus"
+                        android:id="@+id/tvDeviceName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:shadowColor="#CC000000"
+                        android:shadowDx="0"
+                        android:shadowDy="2"
+                        android:shadowRadius="6"
+                        android:textColor="#FFFFFF"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        tools:text="AirPods Pro 2" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="6dp"
+                            android:layout_height="6dp"
+                            android:background="@drawable/bg_button_rounded"
+                            android:backgroundTint="#30D158" />
+
+                        <TextView
+                            android:id="@+id/tvConnectionStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:shadowColor="#CC000000"
+                            android:shadowDx="0"
+                            android:shadowDy="1"
+                            android:shadowRadius="4"
+                            android:text="@string/status_connected_text"
+                            android:textColor="#E0E0E0"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 右上角单一真实电量徽标 -->
+                <LinearLayout
+                    android:id="@+id/layoutBatteryBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_battery_badge"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="5dp">
+
+                    <ImageView
+                        android:id="@+id/ivBatteryIcon"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_battery"
+                        app:tint="#34C759"
+                        android:contentDescription="Battery Level" />
+
+                    <TextView
+                        android:id="@+id/tvBatteryLevel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:shadowColor="#CC000000"
+                        android:shadowColor="#99000000"
                         android:shadowDx="0"
                         android:shadowDy="1"
-                        android:shadowRadius="4"
-                        android:text="@string/status_connected_text"
-                        android:textColor="#E0E0E0"
-                        android:textSize="11sp" />
+                        android:shadowRadius="3"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        tools:text="85%" />
+
+                    <ImageView
+                        android:id="@+id/ivBatteryCharging"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_marginStart="2dp"
+                        android:src="@drawable/ic_lightning"
+                        android:visibility="gone"
+                        android:contentDescription="Charging" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -130,152 +186,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
-
-            <!-- 底部极简原生三电量指示 (去胶囊化，小巧轻盈原生排布) -->
-            <LinearLayout
-                android:id="@+id/batteryContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <!-- 左耳 (Left Earbud) -->
-                <LinearLayout
-                    android:id="@+id/layoutBatteryLeft"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="4dp">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@drawable/ic_earbud_left"
-                        android:contentDescription="Left Earbud" />
-
-                    <TextView
-                        android:id="@+id/tvBatteryLeft"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:shadowColor="#99000000"
-                        android:shadowDx="0"
-                        android:shadowDy="1"
-                        android:shadowRadius="3"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        tools:text="95%" />
-
-                    <ImageView
-                        android:id="@+id/ivChargingLeft"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginStart="2dp"
-                        android:src="@drawable/ic_lightning"
-                        android:visibility="gone"
-                        android:contentDescription="Charging" />
-                </LinearLayout>
-
-                <!-- 分隔圆点 -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginEnd="14dp"
-                    android:text="•"
-                    android:textColor="#80FFFFFF"
-                    android:textSize="10sp" />
-
-                <!-- 充电盒 (Case) -->
-                <LinearLayout
-                    android:id="@+id/layoutBatteryCase"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="4dp">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@drawable/ic_charging_case"
-                        android:contentDescription="Charging Case" />
-
-                    <TextView
-                        android:id="@+id/tvBatteryCase"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:shadowColor="#99000000"
-                        android:shadowDx="0"
-                        android:shadowDy="1"
-                        android:shadowRadius="3"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        tools:text="80%" />
-
-                    <ImageView
-                        android:id="@+id/ivChargingCase"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginStart="2dp"
-                        android:src="@drawable/ic_lightning"
-                        android:visibility="visible"
-                        android:contentDescription="Charging" />
-                </LinearLayout>
-
-                <!-- 分隔圆点 -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginEnd="14dp"
-                    android:text="•"
-                    android:textColor="#80FFFFFF"
-                    android:textSize="10sp" />
-
-                <!-- 右耳 (Right Earbud) -->
-                <LinearLayout
-                    android:id="@+id/layoutBatteryRight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="4dp">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@drawable/ic_earbud_right"
-                        android:contentDescription="Right Earbud" />
-
-                    <TextView
-                        android:id="@+id/tvBatteryRight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:shadowColor="#99000000"
-                        android:shadowDx="0"
-                        android:shadowDy="1"
-                        android:shadowRadius="3"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        tools:text="95%" />
-
-                    <ImageView
-                        android:id="@+id/ivChargingRight"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginStart="2dp"
-                        android:src="@drawable/ic_lightning"
-                        android:visibility="gone"
-                        android:contentDescription="Charging" />
-                </LinearLayout>
-            </LinearLayout>
 
         </LinearLayout>
     </FrameLayout>

@@ -1,16 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.VibePop" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.VibePop" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
         <item name="colorSecondary">@color/accent</item>
         <item name="android:statusBarColor">@color/bg_app</item>
         <item name="android:navigationBarColor">@color/bg_app</item>
         <item name="android:windowBackground">@color/bg_app</item>
+
+        <!-- 全局暗黑卡片与文字表面色 -->
+        <item name="colorSurface">@color/bg_card_dark</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+
+        <!-- 全局暗黑弹窗对话框主题 -->
+        <item name="materialAlertDialogTheme">@style/Theme.VibePop.Dialog</item>
+        <item name="alertDialogTheme">@style/Theme.VibePop.Dialog</item>
+    </style>
+
+    <!-- 弹窗对话框暗黑毛玻璃风格 -->
+    <style name="Theme.VibePop.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorSurface">#161B22</item>
+        <item name="colorOnSurface">#FFFFFF</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#8B949E</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.VibePop.Dialog</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.VibePop.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.VibePop.DialogButton.Negative</item>
+    </style>
+
+    <style name="ShapeAppearance.VibePop.Dialog" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="Widget.VibePop.DialogButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.VibePop.DialogButton.Negative" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/text_secondary</item>
     </style>
 
     <!-- 锁屏与前台透明浮层 Activity 主题 -->
-    <style name="Theme.VibePop.Transparent" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.VibePop.Transparent" parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>

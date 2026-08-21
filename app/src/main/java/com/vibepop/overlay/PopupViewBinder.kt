@@ -38,37 +38,46 @@ class PopupViewBinder(
     private val ivCustomImage: ImageView = rootView.findViewById(R.id.ivCustomImage)
     private val viewGradientOverlay: View? = rootView.findViewById(R.id.viewGradientOverlay)
 
-    private val tvBatteryLeft: TextView = rootView.findViewById(R.id.tvBatteryLeft)
-    private val ivChargingLeft: ImageView = rootView.findViewById(R.id.ivChargingLeft)
-    private val tvBatteryRight: TextView = rootView.findViewById(R.id.tvBatteryRight)
-    private val ivChargingRight: ImageView = rootView.findViewById(R.id.ivChargingRight)
-    private val tvBatteryCase: TextView = rootView.findViewById(R.id.tvBatteryCase)
-    private val ivChargingCase: ImageView = rootView.findViewById(R.id.ivChargingCase)
+    private val tvBatteryLevel: TextView = rootView.findViewById(R.id.tvBatteryLevel)
+    private val ivBatteryIcon: ImageView = rootView.findViewById(R.id.ivBatteryIcon)
+    private val ivBatteryCharging: ImageView = rootView.findViewById(R.id.ivBatteryCharging)
 
     fun bind(deviceState: DeviceBatteryState) {
         val context = rootView.context
 
-        // 设备名称与连接状态 (左上角展示当前连接的真实蓝牙设备名称)
-        val displayName = if (deviceState.deviceName.isNotBlank()) {
-            deviceState.deviceName
-        } else {
-            config.customDeviceName
+        // 设备名称与连接状态 (优先展示用户设置的专属名称，未设置时展示当前连接的真实蓝牙设备名称)
+        val displayName = when {
+            config.customDeviceName.isNotBlank() -> config.customDeviceName
+            deviceState.deviceName.isNotBlank() -> deviceState.deviceName
+            else -> context.getString(R.string.device_name_fallback)
         }
         tvDeviceName.text = displayName
         tvConnectionStatus.text = context.getString(R.string.status_connected_text)
 
-        // 绑定电量
-        bindBatteryItem(tvBatteryLeft, ivChargingLeft, deviceState.leftBattery, deviceState.isLeftCharging)
-        bindBatteryItem(tvBatteryRight, ivChargingRight, deviceState.rightBattery, deviceState.isRightCharging)
-        bindBatteryItem(tvBatteryCase, ivChargingCase, deviceState.caseBattery, deviceState.isCaseCharging)
+        // 绑定右上角单路真实电量
+        bindSingleBattery(deviceState.batteryLevel, deviceState.isCharging)
 
         // 动效/多媒体选型与加载
         setupMedia()
     }
 
+    /**
+     * 弹窗显示期间收到电量广播时，仅刷新电量徽标，不重新加载媒体
+     */
+    fun updateBattery(batteryLevel: Int) {
+        bindSingleBattery(batteryLevel, false)
+    }
+
     private fun setupMedia() {
         try {
-            // 1. 如果用户导入了本地媒体文件 (视频 / 图片 / Lottie)
+            // 1. 如果选中了内置预设视频特效 "great_victory" (伟大胜利)
+            if (config.animationTheme == "great_victory") {
+                viewGradientOverlay?.visibility = View.GONE
+                playPresetVideo(R.raw.video_great_victory)
+                return
+            }
+
+            // 2. 如果用户导入了本地媒体文件 (视频 / 图片 / Lottie)
             if (!config.customMediaPath.isNullOrBlank()) {
                 val file = File(config.customMediaPath)
                 if (file.exists()) {
@@ -92,24 +101,72 @@ class PopupViewBinder(
                 }
             }
 
-            // 2. 内置预设 Lottie 动画加载
+            // 3. 经典 AirPods 拟真 Lottie 动画加载
             viewGradientOverlay?.visibility = View.VISIBLE
             videoView.visibility = View.GONE
             ivCustomImage.visibility = View.GONE
             lottieView.visibility = View.VISIBLE
 
             lottieView.repeatCount = LottieDrawable.INFINITE
-            val assetName = when (config.animationTheme) {
-                "cyberpunk_mecha" -> "cyberpunk_mecha.json"
-                "minimalist_pulse" -> "minimalist_pulse.json"
-                else -> "headset_animation.json"
-            }
-            lottieView.setAnimation(assetName)
+            lottieView.setAnimation("headset_animation.json")
             lottieView.playAnimation()
 
         } catch (e: Exception) {
             showFallback()
         }
+    }
+
+    private fun playPresetVideo(rawResId: Int) {
+        lottieView.visibility = View.GONE
+        ivCustomImage.visibility = View.GONE
+        videoView.visibility = View.VISIBLE
+
+        val context = rootView.context
+        val videoUri = Uri.parse("android.resource://${context.packageName}/$rawResId")
+        videoView.setVideoURI(videoUri)
+        val isOnComplete = config.videoDismissMode == "on_complete"
+
+        videoView.setOnPreparedListener { mp ->
+            mp.isLooping = !isOnComplete // 播放完消退模式下不循环；定时消退模式下循环播放
+            mp.setVolume(1.0f, 1.0f)     // 开启视频震撼原生音效
+
+            // 满铺居中裁剪 (Center Crop)，彻底消除黑边与内嵌框感觉
+            val videoWidth = mp.videoWidth.toFloat()
+            val videoHeight = mp.videoHeight.toFloat()
+            if (videoWidth > 0 && videoHeight > 0) {
+                val mediaContainer = rootView.findViewById<View>(R.id.mediaContainer)
+                mediaContainer?.post {
+                    val containerWidth = mediaContainer.width.toFloat()
+                    val containerHeight = mediaContainer.height.toFloat()
+                    if (containerWidth > 0 && containerHeight > 0) {
+                        val scale = maxOf(containerWidth / videoWidth, containerHeight / videoHeight)
+                        val targetWidth = (videoWidth * scale).toInt()
+                        val targetHeight = (videoHeight * scale).toInt()
+                        val lp = FrameLayout.LayoutParams(targetWidth, targetHeight, Gravity.CENTER)
+                        videoView.layoutParams = lp
+                    }
+                }
+            }
+
+            // 强制手机扬声器 (喇叭) 外放声音
+            if (config.isForceSpeakerphone) {
+                routeAudioToSpeaker(mp)
+            }
+
+            mp.start()
+        }
+
+        if (isOnComplete) {
+            videoView.setOnCompletionListener {
+                onDismissRequested()
+            }
+        }
+
+        videoView.setOnErrorListener { _, _, _ ->
+            showFallback()
+            true
+        }
+        videoView.start()
     }
 
     private fun playVideo(file: File) {
@@ -246,28 +303,31 @@ class PopupViewBinder(
         }
     }
 
-    private fun bindBatteryItem(
-        textView: TextView,
-        chargingIcon: ImageView,
-        batteryPercent: Int,
-        isCharging: Boolean
-    ) {
+    private fun bindSingleBattery(batteryPercent: Int, isCharging: Boolean) {
+        val context = rootView.context
         if (batteryPercent < 0) {
-            textView.text = "--%"
-            chargingIcon.visibility = View.GONE
+            tvBatteryLevel.text = context.getString(R.string.battery_unknown)
+            tvBatteryLevel.setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
+            ivBatteryIcon.setColorFilter(ContextCompat.getColor(context, R.color.text_secondary))
+            ivBatteryCharging.visibility = View.GONE
             return
         }
 
-        textView.text = "$batteryPercent%"
-        chargingIcon.visibility = if (isCharging) View.VISIBLE else View.GONE
+        tvBatteryLevel.text = "$batteryPercent%"
+        ivBatteryCharging.visibility = if (isCharging) View.VISIBLE else View.GONE
 
-        // 根据电量动态着色
+        // 根据电量与充电状态动态着色
         val colorRes = when {
             isCharging -> R.color.battery_charging_icon
             batteryPercent <= 20 -> R.color.battery_red
             batteryPercent <= 40 -> R.color.battery_yellow
-            else -> R.color.text_primary
+            else -> R.color.battery_green
         }
-        textView.setTextColor(ContextCompat.getColor(rootView.context, colorRes))
+        val resolvedColor = ContextCompat.getColor(context, colorRes)
+        tvBatteryLevel.setTextColor(ContextCompat.getColor(context, R.color.text_primary))
+        ivBatteryIcon.setColorFilter(resolvedColor)
+        if (isCharging) {
+            ivBatteryCharging.setColorFilter(resolvedColor)
+        }
     }
 }

@@ -14,24 +14,94 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- 页面标题 -->
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- 页面标题与目标切换下拉框 (单行齐平) -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🎨 动效工坊"
-            android:textColor="@color/text_primary"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🎨 动效工坊"
+                android:textColor="@color/text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinnerThemeTarget"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_battery_badge"
+                android:gravity="center_vertical|end"
+                android:popupBackground="@color/bg_card_dark"
+                android:dropDownVerticalOffset="38dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+        <!-- 弹窗显示名称与重命名卡片 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardThemeDeviceName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="选择预设拟真动效，或从相册导入任意 MP4 视频与壁纸"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:layout_marginTop="14dp"
+            app:cardBackgroundColor="@color/bg_card_dark"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp">
 
-        <!-- 预设动效视觉卡片组 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="弹窗显示名称"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+id/tvCurrentTargetDeviceName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="空"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRenameTargetDevice"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="✏️ 重命名"
+                    android:textColor="@color/primary"
+                    android:textSize="13sp"
+                    app:cornerRadius="10dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 动效主题标题 -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -87,7 +157,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="拟真开盖、耳机出仓动画与原生电量指示"
+                        android:text="拟真开盖、耳机出仓动效与右上角电量指示"
                         android:textColor="@color/text_secondary"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -101,9 +171,9 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 卡片 2: 赛博机甲 / 二次元 -->
+        <!-- 卡片 2: 伟大胜利 (内置高清全景视频特效) -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardThemeCyberpunk"
+            android:id="@+id/cardThemeGreatVictory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -126,7 +196,7 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:src="@drawable/ic_sparkles"
-                    app:tint="#A855F7" />
+                    app:tint="@color/status_warning" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -138,7 +208,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="赛博机甲 / 二次元光效"
+                        android:text="伟大胜利"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -147,13 +217,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="高能粒子环绕、霓虹流光与机甲律动"
+                        android:text="全景高光胜利动效（自带震撼原声音效）"
                         android:textColor="@color/text_secondary"
                         android:textSize="11sp" />
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/ivCheckCyberpunk"
+                    android:id="@+id/ivCheckGreatVictory"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:src="@drawable/ic_check_circle"
@@ -161,67 +231,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 卡片 3: 极简声波脉冲 -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardThemeMinimalist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="@color/bg_card_dark"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/card_stroke"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_lightning"
-                    app:tint="#38BDF8" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="极简声波脉冲"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="纯粹极简波形与现代极简光晕"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/ivCheckMinimalist"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_check_circle"
-                    android:visibility="gone" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- 卡片 4: 相册自定义媒体 -->
+        <!-- 卡片 3: 本地多媒体导入 -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardThemeCustom"
             android:layout_width="match_parent"
@@ -258,7 +268,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="相册自定义多媒体"
+                        android:text="本地多媒体导入"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -302,7 +312,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="自定义多媒体导入"
+                    android:text="本地多媒体导入"
                     android:textColor="@color/text_primary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -311,7 +321,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="支持 MP4 视频 (自带音效)、GIF 动图、WebP、PNG、JPG"
+                    android:text="支持 MP4 视频（可带原声音效）、GIF 动图、WebP、PNG、JPG"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
@@ -332,7 +342,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="🎬 视频播放与消退规则"
+                    android:text="🎬 视频播放与关闭规则"
                     android:textColor="@color/text_primary"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -348,7 +358,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:text="视频播放完毕后自动消退（推荐）"
+                        android:text="单次播放完毕后自动关闭（推荐）"
                         android:textColor="@color/text_primary"
                         android:textSize="13sp" />
 
@@ -356,7 +366,7 @@
                         android:id="@+id/rbVideoTimer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="固定倒计时消退（循环播放直至倒计时结束）"
+                        android:text="固定倒计时关闭（循环播放直至计时结束）"
                         android:textColor="@color/text_primary"
                         android:textSize="13sp" />
                 </RadioGroup>

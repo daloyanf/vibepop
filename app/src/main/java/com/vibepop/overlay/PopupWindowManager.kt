@@ -29,6 +29,7 @@ object PopupWindowManager {
     private var isShowing = false
 
     private var currentBinder: PopupViewBinder? = null
+    private var currentDeviceAddress: String? = null
 
     /**
      * 显示拟真耳机弹窗
@@ -121,10 +122,13 @@ object PopupWindowManager {
                 dismissPopup()
             }
             currentBinder = binder
+            currentDeviceAddress = deviceState.deviceAddress
             binder.bind(deviceState)
 
             // 4. 自动消退调度器
-            val isVideoOnComplete = (config.customMediaType == "video" || config.customMediaPath?.lowercase()?.endsWith(".mp4") == true)
+            val isVideoOnComplete = (config.animationTheme == "great_victory" ||
+                    config.customMediaType == "video" ||
+                    config.customMediaPath?.lowercase()?.endsWith(".mp4") == true)
                     && config.videoDismissMode == "on_complete"
 
             val delayMillis = if (isVideoOnComplete) {
@@ -172,6 +176,22 @@ object PopupWindowManager {
     }
 
     /**
+     * 弹窗显示期间收到电量广播时，仅刷新当前设备的电量徽标
+     * (不重新加载媒体、不重复触发弹窗，避免耳机周期上报电量时反复打扰)
+     */
+    fun updateBatteryIfShowing(deviceAddress: String, batteryLevel: Int) {
+        if (!isShowing) return
+        if (deviceAddress.isBlank()) return
+        val current = currentDeviceAddress ?: return
+        if (!current.equals(deviceAddress, ignoreCase = true)) return
+        try {
+            currentBinder?.updateBattery(batteryLevel)
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to update battery on showing popup: ${e.message}")
+        }
+    }
+
+    /**
      * 隐藏并移除弹窗
      */
     @Synchronized
@@ -184,6 +204,7 @@ object PopupWindowManager {
 
             currentBinder?.release()
             currentBinder = null
+            currentDeviceAddress = null
 
             popupView?.let { view ->
                 if (view.isAttachedToWindow) {

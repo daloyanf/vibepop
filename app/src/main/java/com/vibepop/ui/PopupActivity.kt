@@ -103,7 +103,9 @@ class PopupActivity : AppCompatActivity() {
         binder?.bind(deviceState)
 
         // 5. 自动消退倒计时
-        val isVideoOnComplete = (config.customMediaType == "video" || config.customMediaPath?.lowercase()?.endsWith(".mp4") == true)
+        val isVideoOnComplete = (config.animationTheme == "great_victory" ||
+                config.customMediaType == "video" ||
+                config.customMediaPath?.lowercase()?.endsWith(".mp4") == true)
                 && config.videoDismissMode == "on_complete"
 
         val delayMillis = if (isVideoOnComplete) {

@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import com.vibepop.data.repository.PreferencesRepository
 import com.vibepop.service.HeadsetMonitorService
 
@@ -18,6 +19,7 @@ class VibePopApp : Application() {
     }
 
     override fun onCreate() {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         super.onCreate()
         instance = this
         createNotificationChannel()

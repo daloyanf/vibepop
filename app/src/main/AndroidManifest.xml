@@ -74,16 +74,17 @@
             android:exported="false"
             android:foregroundServiceType="connectedDevice" />
 
-        <!-- 蓝牙广播监听器 -->
+        <!-- 蓝牙广播监听器 (exported=false：仅接收系统广播，防止其他应用伪造广播触发弹窗) -->
         <receiver
             android:name=".receiver.HeadsetBroadcastReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
                 <action android:name="android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED" />
                 <action android:name="android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.device.action.BATTERY_LEVEL_CHANGED" />
             </intent-filter>
         </receiver>
 

@@ -130,6 +130,7 @@ class HeadsetMonitorService : Service() {
                 addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
                 addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
                 addAction(BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED)
+                addAction(HeadsetBroadcastReceiver.ACTION_BATTERY_LEVEL_CHANGED)
             }
             registerReceiver(headsetReceiver, filter)
             Log.d(TAG, "HeadsetBroadcastReceiver registered dynamically")

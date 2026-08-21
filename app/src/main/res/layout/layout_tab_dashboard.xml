@@ -45,7 +45,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="拟真/二次元蓝牙耳机悬浮弹窗引擎"
+                    android:text="蓝牙耳机自定义拟真弹窗"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -59,13 +59,13 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="10dp"
                 android:paddingBottom="4dp"
-                android:text="服务就绪"
+                android:text="服务已就绪"
                 android:textColor="@color/status_connected"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- 权限异常快捷警报条 (缺失权限时展示，点击直跳权限页) -->
+        <!-- 权限异常快捷警报条 (缺失权限或蓝牙关闭时展示，点击直跳配置) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardPermissionWarning"
             android:layout_width="match_parent"
@@ -102,7 +102,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="部分必要权限尚未授予"
+                        android:text="系统配置提示"
                         android:textColor="#FFD580"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -111,7 +111,7 @@
                         android:id="@+id/tvMissingPermSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="点击立即前往权限中心一键配置"
+                        android:text="点击立即配置"
                         android:textColor="#C7B299"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -119,7 +119,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="去配置 ›"
+                    android:text="去处理 ›"
                     android:textColor="@color/status_warning"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -178,14 +178,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="开启后当蓝牙耳机连接成功时，自动唤起拟真动效弹窗"
+                    android:text="开启后当已勾选的蓝牙耳机连接成功时，自动在屏幕底部唤起动效弹窗"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 核心预览与测试卡片 (首屏直达) -->
+        <!-- 核心预览与控制卡片 (将弹窗预览、声音外放与停留时长深度融合) -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -218,7 +218,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="实时动效测试"
+                        android:text="弹窗预览与控制"
                         android:textColor="@color/text_primary"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -227,17 +227,81 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="无需连接真实耳机，立即预览磨砂玻璃质感、电量展示与当前选定动效"
+                    android:layout_marginTop="4dp"
+                    android:text="实时配置音频路由与停留时长，并一键预览暗黑拟真弹窗效果"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
+                <!-- 1. 强制手机扬声器外放声音开关 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="强制手机扬声器外放声音"
+                            android:textColor="@color/text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="即使已连接蓝牙耳机，视频动效声音也优先从手机外放喇叭播放"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchForceSpeakerphone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/card_stroke" />
+
+                <!-- 2. 倒计时时长滑动条 -->
+                <TextView
+                    android:id="@+id/tvDismissDelayLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="弹窗停留时长：4 秒"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderDismissDelay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stepSize="1"
+                    android:value="4"
+                    android:valueFrom="2"
+                    android:valueTo="15" />
+
+                <!-- 3. 模拟弹窗一键测试按钮 -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnTestPopup"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="14dp"
-                    android:text="✨ 立即模拟弹窗 (预览动效)"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="8dp"
+                    android:text="✨ 模拟弹窗一键测试"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -250,7 +314,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 状态快照卡片 (三列摘要) -->
+        <!-- 状态快照卡片 (两列摘要：生效主题与响应目标) -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -346,7 +410,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="耳机过滤"
+                            android:text="响应目标"
                             android:textColor="@color/text_secondary"
                             android:textSize="11sp" />
 
@@ -355,52 +419,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="所有耳机"
+                            android:text="未开启 (全不响应)"
                             android:textColor="@color/text_primary"
                             android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="@color/card_stroke" />
-
-                    <!-- 声音模式 -->
-                    <LinearLayout
-                        android:id="@+id/btnQuickGoSettings"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_nav_settings"
-                            app:tint="@color/status_warning" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="声音外放"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:id="@+id/tvQuickSpeakerStatus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="手机扬声器"
-                            android:textColor="@color/text_primary"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>

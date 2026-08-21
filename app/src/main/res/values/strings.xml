@@ -1,37 +1,112 @@
 <resources>
     <string name="app_name">VibePop</string>
-    <string name="service_notification_title">VibePop 蓝牙耳机弹窗服务运行中</string>
-    <string name="service_notification_desc">正在后台监听蓝牙耳机连接状态…</string>
+    <string name="service_notification_title">蓝牙耳机弹窗服务运行中</string>
+    <string name="service_notification_desc">正在后台监听已勾选耳机的连接状态</string>
 
-    <!-- UI Strings -->
-    <string name="service_status_running">后台监听服务：运行中</string>
-    <string name="service_status_stopped">后台监听服务：已停止</string>
-    <string name="btn_start_service">启动监听服务</string>
+    <!-- UI 基础文案 -->
+    <string name="service_status_running">耳机连接监听：运行中</string>
+    <string name="service_status_stopped">耳机连接监听：已暂停</string>
+    <string name="btn_start_service">开启监听服务</string>
     <string name="btn_stop_service">停止监听服务</string>
-    <string name="btn_test_popup">立即模拟弹窗 (预览动效)</string>
+    <string name="btn_test_popup">模拟弹窗预览</string>
+    <string name="btn_confirm">确定</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_go_settings">去设置</string>
 
-    <!-- Permissions -->
-    <string name="perm_overlay_title">悬浮窗权限 (必需)</string>
-    <string name="perm_overlay_desc">用于在任意界面底部展示耳机弹窗卡片</string>
+    <!-- 权限说明 -->
+    <string name="perm_overlay_title">悬浮窗权限（必需）</string>
+    <string name="perm_overlay_desc">允许在桌面或任意应用上方弹出耳机动效卡片</string>
     <string name="perm_bluetooth_title">蓝牙连接权限</string>
-    <string name="perm_bluetooth_desc">用于检测蓝牙耳机连接与电量状态</string>
+    <string name="perm_bluetooth_desc">用于识别耳机连接状态并读取硬件真实电量</string>
     <string name="perm_notification_title">通知权限</string>
-    <string name="perm_notification_desc">保持后台服务常驻，防止被系统清理</string>
+    <string name="perm_notification_desc">保持前台服务常驻，防止监听进程被系统后台清理</string>
     <string name="btn_grant">去授权</string>
-    <string name="btn_granted">已授权</string>
+    <string name="btn_granted">已开启</string>
+    <string name="perm_missing_overlay">悬浮窗</string>
+    <string name="perm_missing_bluetooth">蓝牙权限</string>
+    <string name="perm_missing_notification">通知</string>
 
-    <!-- Popup Settings -->
+    <!-- 弹窗设置 -->
     <string name="settings_title">弹窗偏好设置</string>
-    <string name="setting_dismiss_delay">自动消退倒计时：%d 秒</string>
-    <string name="setting_device_name">模拟设备名称</string>
-    <string name="setting_theme_selection">选择动效主题</string>
+    <string name="setting_dismiss_delay">弹窗停留时长：%1$d 秒</string>
+    <string name="setting_device_name">自定义显示名称</string>
+    <string name="setting_theme_selection">动效主题</string>
 
-    <!-- Popup Default Texts -->
-    <string name="default_device_name">AirPods Pro 2</string>
-    <string name="status_connected_text">已连接到您的设备</string>
-    <string name="label_left_ear">左耳 (L)</string>
-    <string name="label_right_ear">右耳 (R)</string>
-    <string name="label_case">充电盒 (Case)</string>
+    <!-- 弹窗展示文本 -->
+    <string name="default_device_name">自定义名称</string>
+    <string name="status_connected_text">已连接</string>
+    <string name="battery_unknown">--%</string>
     <string name="btn_popup_done">完成</string>
     <string name="btn_popup_settings">音频设置</string>
+    <string name="device_name_fallback">蓝牙耳机</string>
+    <string name="device_name_unknown">未知设备</string>
+    <string name="name_empty_placeholder">空</string>
+
+    <!-- 控制台 -->
+    <string name="dash_service_running">服务运行中</string>
+    <string name="dash_service_stopped">服务已暂停</string>
+    <string name="dash_service_sub_running">已勾选耳机连接时将自动在屏幕底部唤起动效弹窗</string>
+    <string name="dash_service_sub_stopped">点击右侧开关开启耳机连接自动监听</string>
+    <string name="dash_devices_enabled">已开启 (%1$d台)</string>
+    <string name="dash_devices_none">未开启 (全不响应)</string>
+    <string name="dash_missing_perm_summary">尚有 %1$s 权限未授予，点击一键配置</string>
+    <string name="dash_bt_off_warning">⚠️ 手机系统蓝牙未开启，点击开启蓝牙</string>
+    <string name="dash_theme_classic">AirPods Pro</string>
+    <string name="dash_theme_great_victory">伟大胜利</string>
+    <string name="dash_theme_custom">相册自定义</string>
+
+    <!-- 主题与媒体类型描述 -->
+    <string name="media_type_video_mp4">视频 (MP4)</string>
+    <string name="media_type_image_gif">图片 / GIF</string>
+    <string name="media_type_lottie">Lottie 矢量</string>
+    <string name="media_type_other">相册媒体</string>
+    <string name="media_type_video_full">视频 (MP4 / 自带声音)</string>
+    <string name="media_type_image_full">图片 / GIF 动图</string>
+    <string name="media_active_hint">当前已生效：%1$s (%2$s)</string>
+    <string name="media_active_hint_no_file">当前已生效：%1$s</string>
+
+    <!-- 蓝牙状态提示 -->
+    <string name="bt_off_toast">⚠️ 手机蓝牙已关闭，将无法监听耳机弹窗</string>
+    <string name="bt_on_toast">✅ 手机蓝牙已开启</string>
+    <string name="bt_off_prompt_toast">⚠️ 手机蓝牙未开启，请先开启系统蓝牙</string>
+    <string name="bt_refreshed_toast">已刷新已配对蓝牙设备列表</string>
+    <string name="bt_granted_on_toast">蓝牙已授权且处于开启状态</string>
+    <string name="bt_enable_button">开启蓝牙</string>
+    <string name="bt_not_enabled_title">📡 手机蓝牙未开启</string>
+    <string name="bt_not_enabled_message">检测到系统蓝牙处于关闭状态。开启蓝牙后，VibePop 才能在耳机连接时自动触发个性化弹窗。</string>
+    <string name="bt_later">稍后开启</string>
+
+    <!-- 弹窗响应策略变更提示 -->
+    <string name="target_policy_notice_title">🔔 弹窗响应策略已更新</string>
+    <string name="target_policy_notice_message">为了更精准的体验，VibePop 现在默认不会响应任何耳机。请前往「设备管理」勾选需要触发弹窗的耳机，并可为每个耳机单独定制专属动效。</string>
+    <string name="target_policy_notice_go">去设备管理</string>
+    <string name="target_policy_notice_later">知道了</string>
+
+    <!-- 媒体导入 -->
+    <string name="import_success_global">🎉 全局 %1$s 导入成功！</string>
+    <string name="import_success_device">🎉 耳机专属多媒体导入成功！</string>
+    <string name="import_failed">导入失败，请检查文件格式</string>
+    <string name="media_perm_granted_toast">已获得媒体权限，请再次点击导入</string>
+    <string name="media_perm_needed_toast">需要媒体读取权限以导入自定义动效</string>
+    <string name="overlay_needed_toast">请先授予悬浮窗权限以展示弹窗</string>
+
+    <!-- 重命名 -->
+    <string name="rename_dialog_title">✏️ 修改弹窗显示名称</string>
+    <string name="rename_dialog_hint">弹窗显示名称（留空则展示系统蓝牙原名）</string>
+    <string name="rename_dialog_message">正在为【%1$s】设置弹窗上展示的名称：</string>
+    <string name="rename_global_default">全局默认</string>
+    <string name="rename_target_fallback">所选耳机</string>
+    <string name="rename_updated_toast">已更新弹窗显示名称为：%1$s</string>
+    <string name="rename_cleared_toast">已清空自定义名称（弹窗将显示系统原名）</string>
+
+    <!-- 设备列表 -->
+    <string name="device_empty_hint">未发现已配对的蓝牙设备。请先在系统蓝牙设置中连接配对，并在此处勾选启用。</string>
+    <string name="device_enabled_status">✅ 已开启弹窗响应</string>
+    <string name="device_disabled_status">⏸️ 未开启（不响应） • MAC: %1$s</string>
+    <string name="device_need_enable_toast">请先开启右侧响应开关，再进行动效配置</string>
+
+    <!-- 动效工坊目标切换 -->
+    <string name="theme_target_global">🌐 全局默认</string>
+    <string name="theme_target_device">🎧 %1$s</string>
+    <string name="spinner_arrow">%1$s  ▼</string>
 </resources>
