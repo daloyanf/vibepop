@@ -36,18 +36,20 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
-          mkdir -p app
-          echo "$KEYSTORE_BASE64" | base64 --decode > app/vibepop-release.jks
-          cp app/vibepop-release.jks vibepop-release.jks
-          cat <<EOF > keystore.properties
-          storePassword=$KEYSTORE_PASSWORD
-          keyPassword=$KEY_PASSWORD
-          keyAlias=$KEY_ALIAS
-          storeFile=vibepop-release.jks
-          EOF
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ]; then
+            mkdir -p app
+            echo "$KEYSTORE_BASE64" | base64 --decode > app/vibepop-release.jks
+            cp app/vibepop-release.jks vibepop-release.jks
+            printf "storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=vibepop-release.jks\n" "$KEYSTORE_PASSWORD" "$KEY_PASSWORD" "$KEY_ALIAS" > keystore.properties
+            echo "Keystore signing configured successfully."
+          else
+            echo "Keystore secrets not provided or incomplete; will build without release signing configuration."
+          fi
 
       - name: Grant Execute Permission for Gradlew
-        run: chmod +x gradlew
+        run: |
+          sed -i 's/\r$//' gradlew
+          chmod +x gradlew
 
       - name: Build APK with Gradle
         run: ./gradlew assembleRelease --no-daemon --stacktrace
@@ -57,6 +59,10 @@ jobs:
           mkdir -p release_dist
           if [ -f app/build/outputs/apk/release/app-release.apk ]; then
             cp app/build/outputs/apk/release/app-release.apk release_dist/app-release.apk
+          elif [ -f app/build/outputs/apk/release/app-release-unsigned.apk ]; then
+            cp app/build/outputs/apk/release/app-release-unsigned.apk release_dist/app-release.apk
+          elif [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
+            cp app/build/outputs/apk/debug/app-debug.apk release_dist/app-release.apk
           fi
           git log -1 --pretty=format:"%B" > release_dist/RELEASE_NOTES.md
 

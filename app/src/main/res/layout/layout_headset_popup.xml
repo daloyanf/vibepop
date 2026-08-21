@@ -22,11 +22,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!-- 视频播放 (MP4 / WebM 无缝循环静音播放) -->
-            <VideoView
+            <!-- 视频播放 (MP4 / WebM，FillVideoView 测量期 Center Crop 满铺无黑边) -->
+            <com.vibepop.overlay.FillVideoView
                 android:id="@+id/videoView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_gravity="center"
                 android:visibility="gone" />
 
             <!-- 图片 / 动图 (PNG / JPG / WebP / GIF) -->

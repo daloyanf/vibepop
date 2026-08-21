@@ -4,10 +4,6 @@
     <string name="service_notification_desc">正在后台监听已勾选耳机的连接状态</string>
 
     <!-- UI 基础文案 -->
-    <string name="service_status_running">耳机连接监听：运行中</string>
-    <string name="service_status_stopped">耳机连接监听：已暂停</string>
-    <string name="btn_start_service">开启监听服务</string>
-    <string name="btn_stop_service">停止监听服务</string>
     <string name="btn_test_popup">模拟弹窗预览</string>
     <string name="btn_confirm">确定</string>
     <string name="btn_cancel">取消</string>
@@ -27,17 +23,12 @@
     <string name="perm_missing_notification">通知</string>
 
     <!-- 弹窗设置 -->
-    <string name="settings_title">弹窗偏好设置</string>
     <string name="setting_dismiss_delay">弹窗停留时长：%1$d 秒</string>
-    <string name="setting_device_name">自定义显示名称</string>
-    <string name="setting_theme_selection">动效主题</string>
 
     <!-- 弹窗展示文本 -->
     <string name="default_device_name">自定义名称</string>
     <string name="status_connected_text">已连接</string>
     <string name="battery_unknown">--%</string>
-    <string name="btn_popup_done">完成</string>
-    <string name="btn_popup_settings">音频设置</string>
     <string name="device_name_fallback">蓝牙耳机</string>
     <string name="device_name_unknown">未知设备</string>
     <string name="name_empty_placeholder">空</string>
@@ -104,6 +95,9 @@
     <string name="device_enabled_status">✅ 已开启弹窗响应</string>
     <string name="device_disabled_status">⏸️ 未开启（不响应） • MAC: %1$s</string>
     <string name="device_need_enable_toast">请先开启右侧响应开关，再进行动效配置</string>
+    <string name="device_clear_all">全部关闭</string>
+    <string name="device_clear_all_toast">已关闭全部耳机的弹窗响应</string>
+    <string name="device_none_enabled_toast">当前没有开启响应的耳机</string>
 
     <!-- 动效工坊目标切换 -->
     <string name="theme_target_global">🌐 全局默认</string>

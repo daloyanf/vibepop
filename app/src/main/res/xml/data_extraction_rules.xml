@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 云端备份排除本地偏好（含耳机 MAC 白名单）；设备间迁移保留本机偏好 -->
 <data-extraction-rules>
     <cloud-backup>
-        <include domain="sharedpref" path="."/>
+        <exclude domain="sharedpref" path="."/>
     </cloud-backup>
     <device-transfer>
         <include domain="sharedpref" path="."/>

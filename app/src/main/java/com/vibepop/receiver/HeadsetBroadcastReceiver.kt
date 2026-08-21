@@ -13,6 +13,7 @@ import com.vibepop.R
 import com.vibepop.data.model.DeviceBatteryState
 import com.vibepop.data.repository.PreferencesRepository
 import com.vibepop.overlay.PopupWindowManager
+import com.vibepop.ui.PopupActivity
 
 /**
  * 蓝牙广播接收器：监听耳机连接事件与真实电量更新并触发拟真弹窗
@@ -78,6 +79,7 @@ class HeadsetBroadcastReceiver : BroadcastReceiver() {
         val level = getRealBatteryLevel(intent, device)
         Log.d(TAG, "Battery level updated: $deviceAddress -> $level")
         PopupWindowManager.updateBatteryIfShowing(deviceAddress, level)
+        PopupActivity.updateBatteryIfShowing(deviceAddress, level)
     }
 
     private fun handleDeviceConnected(context: Context, intent: Intent, device: BluetoothDevice?) {
@@ -89,6 +91,12 @@ class HeadsetBroadcastReceiver : BroadcastReceiver() {
 
         val prefsRepo = PreferencesRepository(context)
         val globalConfig = prefsRepo.getPopupConfig()
+
+        // 尊重监听服务开关：服务关闭后清单静态接收器仍可能收到 ACL 广播，此时一律不触发弹窗
+        if (!globalConfig.isServiceEnabled) {
+            Log.d(TAG, "Monitor service disabled, skipping popup trigger")
+            return
+        }
 
         var rawDeviceName = context.getString(R.string.default_device_name)
         var deviceAddress = ""

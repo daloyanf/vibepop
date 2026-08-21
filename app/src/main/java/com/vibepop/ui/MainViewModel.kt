@@ -16,6 +16,7 @@ import com.vibepop.data.repository.PreferencesRepository
 import com.vibepop.overlay.PopupWindowManager
 import com.vibepop.service.HeadsetMonitorService
 import com.vibepop.util.PermissionHelper
+import com.vibepop.util.VideoCropDetector
 import java.io.File
 import java.io.FileOutputStream
 
@@ -27,7 +28,11 @@ data class BondedDeviceItem(
     val animationTheme: String = "classic_airpods",
     val customMediaPath: String? = null,
     val customMediaType: String = "preset",
-    val videoDismissMode: String = "on_complete"
+    val videoDismissMode: String = "on_complete",
+    val cropLeft: Float = 0f,
+    val cropTop: Float = 0f,
+    val cropRight: Float = 1f,
+    val cropBottom: Float = 1f
 )
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -79,7 +84,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 HeadsetMonitorService.start(context)
             } catch (e: Exception) {}
         }
-        _isServiceRunning.value = HeadsetMonitorService.isServiceRunning || config.isServiceEnabled
+        _isServiceRunning.value = HeadsetMonitorService.isServiceRunning
         refreshBondedDevices(context)
     }
 
@@ -104,7 +109,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         animationTheme = devConfig.animationTheme,
                         customMediaPath = devConfig.customMediaPath,
                         customMediaType = devConfig.customMediaType,
-                        videoDismissMode = devConfig.videoDismissMode
+                        videoDismissMode = devConfig.videoDismissMode,
+                        cropLeft = devConfig.cropLeft,
+                        cropTop = devConfig.cropTop,
+                        cropRight = devConfig.cropRight,
+                        cropBottom = devConfig.cropBottom
                     )
                 } ?: emptyList()
                 _bondedDevices.value = list
@@ -169,20 +178,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun importDeviceMedia(context: Context, address: String, uri: Uri): Pair<Boolean, String> {
         return try {
             val mimeType = context.contentResolver.getType(uri)?.lowercase() ?: ""
-            val type = when {
-                mimeType.startsWith("video/") -> "video"
-                mimeType.startsWith("image/") -> "image"
-                mimeType.contains("json") -> "lottie"
-                else -> {
-                    val path = uri.path?.lowercase() ?: ""
-                    when {
-                        path.endsWith(".mp4") || path.endsWith(".webm") || path.endsWith(".mkv") -> "video"
-                        path.endsWith(".gif") || path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".webp") || path.endsWith(".jpeg") -> "image"
-                        path.endsWith(".json") -> "lottie"
-                        else -> "image"
-                    }
-                }
-            }
+            val type = detectMediaType(mimeType, uri.path)
+            if (type == "unsupported") return Pair(false, "")
 
             val ext = resolveMediaExtension(mimeType, uri, type)
 
@@ -194,7 +191,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             val mediaPath = destFile.absolutePath
-            repository.saveDeviceMedia(address, mediaPath, type)
+            val cropRect = if (type == "video") VideoCropDetector.detectCropRatio(destFile) else android.graphics.RectF(0f, 0f, 1f, 1f)
+            repository.saveDeviceMedia(
+                address,
+                mediaPath,
+                type,
+                cropRect.left,
+                cropRect.top,
+                cropRect.right,
+                cropRect.bottom
+            )
             refreshBondedDevices(context)
             Pair(true, type)
         } catch (e: Exception) {
@@ -203,40 +209,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * 一键预览指定耳机的专属弹窗
-     */
-    fun previewDevicePopup(context: Context, address: String) {
-        val devConfig = repository.getDevicePopupConfig(address)
-        val mockState = DeviceBatteryState(
-            deviceName = devConfig.customDeviceName,
-            deviceAddress = address,
-            isConnected = true,
-            batteryLevel = 85,
-            isCharging = false
-        )
-        PopupWindowManager.showPopup(context, mockState, devConfig)
-    }
-
-    /**
-     * 导入本地全局媒体（MP4 视频 / GIF 动图 / WebP / PNG / JPG / JSON 矢量）
+     * 导入本地全局媒体（MP4/WebM 视频 / GIF 动图 / WebP / PNG / JPG / JSON 矢量）
      */
     fun importCustomMedia(context: Context, uri: Uri): Pair<Boolean, String> {
         return try {
             val mimeType = context.contentResolver.getType(uri)?.lowercase() ?: ""
-            val type = when {
-                mimeType.startsWith("video/") -> "video"
-                mimeType.startsWith("image/") -> "image"
-                mimeType.contains("json") -> "lottie"
-                else -> {
-                    val path = uri.path?.lowercase() ?: ""
-                    when {
-                        path.endsWith(".mp4") || path.endsWith(".webm") || path.endsWith(".mkv") -> "video"
-                        path.endsWith(".gif") || path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".webp") || path.endsWith(".jpeg") -> "image"
-                        path.endsWith(".json") -> "lottie"
-                        else -> "image"
-                    }
-                }
-            }
+            val type = detectMediaType(mimeType, uri.path)
+            if (type == "unsupported") return Pair(false, "")
 
             val ext = resolveMediaExtension(mimeType, uri, type)
 
@@ -247,12 +226,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             val mediaPath = destFile.absolutePath
-            repository.saveCustomMedia(mediaPath, type)
+            val cropRect = if (type == "video") VideoCropDetector.detectCropRatio(destFile) else android.graphics.RectF(0f, 0f, 1f, 1f)
+            repository.saveCustomMedia(
+                mediaPath,
+                type,
+                cropRect.left,
+                cropRect.top,
+                cropRect.right,
+                cropRect.bottom
+            )
             repository.saveAnimationTheme("custom_media")
             _popupConfig.value = _popupConfig.value?.copy(
                 customMediaPath = mediaPath,
                 customMediaType = type,
-                animationTheme = "custom_media"
+                animationTheme = "custom_media",
+                cropLeft = cropRect.left,
+                cropTop = cropRect.top,
+                cropRight = cropRect.right,
+                cropBottom = cropRect.bottom
             )
             Pair(true, type)
         } catch (e: Exception) {
@@ -321,7 +312,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
          * 尽量保留原始图片扩展名，避免 JPG/WebP 内容被误存为 .png
          */
         private fun resolveMediaExtension(mimeType: String, uri: Uri, type: String): String = when (type) {
-            "video" -> ".mp4"
+            "video" -> if (mimeType.contains("webm") || uri.path?.lowercase()?.endsWith(".webm") == true) ".webm" else ".mp4"
             "lottie" -> ".json"
             "image" -> {
                 val fromMime = when {
@@ -338,5 +329,32 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             else -> ".bin"
         }
     }
+}
+
+/**
+ * 根据 MIME 类型与 URI 路径识别媒体类别。
+ * 仅 MP4/WebM 视为视频；MKV/AVI/MOV 等 MediaPlayer 无法播放的容器返回 "unsupported"，
+ * 由调用方拒绝导入，避免改名成 .mp4 后播放静默失败
+ */
+internal fun detectMediaType(mimeTypeRaw: String?, path: String?): String {
+    val mime = mimeTypeRaw?.lowercase() ?: ""
+    val p = path?.lowercase() ?: ""
+    val isMp4 = mime.contains("mp4") || p.endsWith(".mp4")
+    val isWebm = mime.contains("webm") || p.endsWith(".webm")
+    if (isMp4 || isWebm) return "video"
+
+    val unsupportedVideo = mime.startsWith("video/") ||
+            p.endsWith(".mkv") || p.endsWith(".avi") || p.endsWith(".mov") ||
+            p.endsWith(".flv") || p.endsWith(".3gp")
+    if (unsupportedVideo) return "unsupported"
+
+    val isImage = mime.startsWith("image/") ||
+            p.endsWith(".gif") || p.endsWith(".png") || p.endsWith(".jpg") ||
+            p.endsWith(".jpeg") || p.endsWith(".webp") || p.endsWith(".bmp") ||
+            p.endsWith(".heic") || p.endsWith(".heif")
+    if (isImage) return "image"
+
+    if (mime.contains("json") || p.endsWith(".json")) return "lottie"
+    return "unsupported"
 }
 

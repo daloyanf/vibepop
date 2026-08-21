@@ -79,6 +79,16 @@
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnClearAllTargets"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/device_clear_all"
+                        android:textColor="@color/primary"
+                        android:textSize="13sp" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnRefreshDevices"
                         style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="wrap_content"

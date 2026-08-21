@@ -1,34 +1,33 @@
 # Gradle and Build Cache
-*.iml
 .gradle/
-/build
-/app/build/
-*/build/
-captures/
-.externalNativeBuild
-.cxx/
+build/
+app/build/
 local.properties
 
-# Android Studio / IntelliJ IDEA
+# IDE & Editor
 .idea/
-*.ipr
-*.iws
+*.iml
+.vscode/
 
-# Output Packages
+# Output Packages & Dist
 *.apk
-*.ap_
 *.aab
-*.dex
+release_dist/
 
-# Signing credentials (Private & Local only)
+# Signing & Secrets (Local only)
 *.jks
 *.keystore
 keystore.properties
+!keystore.properties.example
 
-# OS generated
+# OS & Logs
 .DS_Store
 Thumbs.db
+*.log
 
-# 根目录录屏与本地大文件
+# 根目录测试音视频大文件
 /*.mp4
+/*.webm
+
+
 

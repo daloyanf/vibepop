@@ -8,7 +8,6 @@
     <!-- Backgrounds (全局暗黑调色板) -->
     <color name="bg_app">#0D1117</color>
     <color name="bg_card_dark">#161B22</color>
-    <color name="bg_card_light">#1F242C</color>
     <color name="bg_popup_card">#161B22</color>
     <color name="bg_popup_card_dark">#12161D</color>
 

@@ -3,8 +3,10 @@ package com.vibepop.ui
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private var themeTargetList = listOf<ThemeTargetItem>()
     private var isProgrammaticSpinnerChange = false
     private var hasPromptedBluetoothDialog = false
+    private var bluetoothReceiverRegistered = false
 
     private val bluetoothStateReceiver = object : android.content.BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -96,9 +99,8 @@ class MainActivity : AppCompatActivity() {
     // 3. 相册/多媒体权限申请 Launcher
     private val mediaPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val granted = permissions.entries.any { it.value }
-        if (granted) {
+    ) {
+        if (PermissionHelper.hasMediaPermission(this)) {
             Toast.makeText(this, getString(R.string.media_perm_granted_toast), Toast.LENGTH_SHORT).show()
             viewModel.refreshPermissions(this)
         } else {
@@ -111,7 +113,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        registerReceiver(bluetoothStateReceiver, IntentFilter(android.bluetooth.BluetoothAdapter.ACTION_STATE_CHANGED))
+        // Android 12+ 未授予 BLUETOOTH_CONNECT 时注册蓝牙广播会抛 SecurityException，先检查后注册
+        ensureBluetoothReceiverRegistered()
 
         HeadsetMonitorService.start(this)
         setupNavigation()
@@ -125,6 +128,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         HeadsetMonitorService.start(this)
+        ensureBluetoothReceiverRegistered()
         viewModel.refreshPermissions(this)
         if (viewModel.consumeTargetPolicyNotice()) {
             showTargetPolicyNotice()
@@ -135,9 +139,26 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        if (bluetoothReceiverRegistered) {
+            bluetoothReceiverRegistered = false
+            try {
+                unregisterReceiver(bluetoothStateReceiver)
+            } catch (e: Exception) {}
+        }
+    }
+
+    /**
+     * 保证已授权蓝牙权限时注册系统蓝牙状态广播接收器 (Android 12+ 注册需 BLUETOOTH_CONNECT)
+     */
+    private fun ensureBluetoothReceiverRegistered() {
+        if (bluetoothReceiverRegistered) return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !PermissionHelper.hasBluetoothPermission(this)) return
         try {
-            unregisterReceiver(bluetoothStateReceiver)
-        } catch (e: Exception) {}
+            registerReceiver(bluetoothStateReceiver, IntentFilter(android.bluetooth.BluetoothAdapter.ACTION_STATE_CHANGED))
+            bluetoothReceiverRegistered = true
+        } catch (e: Exception) {
+            Log.w("MainActivity", "Failed to register bluetooth state receiver: ${e.message}")
+        }
     }
 
     /**
@@ -515,6 +536,16 @@ class MainActivity : AppCompatActivity() {
             } else {
                 viewModel.refreshBondedDevices(this)
                 Toast.makeText(this, getString(R.string.bt_refreshed_toast), Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        devices.btnClearAllTargets.setOnClickListener {
+            val enabledCount = viewModel.popupConfig.value?.targetDeviceAddresses?.size ?: 0
+            if (enabledCount <= 0) {
+                Toast.makeText(this, getString(R.string.device_none_enabled_toast), Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.clearAllTargetDevices()
+                Toast.makeText(this, getString(R.string.device_clear_all_toast), Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 云端备份排除本地偏好：避免耳机 MAC 白名单等设备敏感信息上传 -->
 <full-backup-content>
-    <include domain="sharedpref" path="."/>
+    <exclude domain="sharedpref" path="."/>
 </full-backup-content>

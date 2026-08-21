@@ -21,6 +21,10 @@ class PreferencesRepository(context: Context) {
         private const val KEY_VIDEO_DISMISS_MODE = "key_video_dismiss_mode"
         private const val KEY_TARGET_DEVICES = "key_target_devices"
         private const val KEY_TARGET_POLICY_NOTICED = "key_target_policy_noticed"
+        private const val KEY_CROP_LEFT = "key_crop_left"
+        private const val KEY_CROP_TOP = "key_crop_top"
+        private const val KEY_CROP_RIGHT = "key_crop_right"
+        private const val KEY_CROP_BOTTOM = "key_crop_bottom"
 
         // 耳机专属独立配置键前缀
         private const val PREFIX_DEV_NAME = "key_dev_name_"
@@ -28,6 +32,10 @@ class PreferencesRepository(context: Context) {
         private const val PREFIX_DEV_MEDIA_PATH = "key_dev_media_path_"
         private const val PREFIX_DEV_MEDIA_TYPE = "key_dev_media_type_"
         private const val PREFIX_DEV_VIDEO_DISMISS = "key_dev_video_dismiss_"
+        private const val PREFIX_DEV_CROP_LEFT = "key_dev_crop_left_"
+        private const val PREFIX_DEV_CROP_TOP = "key_dev_crop_top_"
+        private const val PREFIX_DEV_CROP_RIGHT = "key_dev_crop_right_"
+        private const val PREFIX_DEV_CROP_BOTTOM = "key_dev_crop_bottom_"
     }
 
     /**
@@ -44,7 +52,11 @@ class PreferencesRepository(context: Context) {
             customMediaPath = prefs.getString(KEY_CUSTOM_MEDIA_PATH, null),
             customMediaType = prefs.getString(KEY_CUSTOM_MEDIA_TYPE, "preset") ?: "preset",
             videoDismissMode = prefs.getString(KEY_VIDEO_DISMISS_MODE, "on_complete") ?: "on_complete",
-            targetDeviceAddresses = HashSet(prefs.getStringSet(KEY_TARGET_DEVICES, emptySet()) ?: emptySet())
+            targetDeviceAddresses = HashSet(prefs.getStringSet(KEY_TARGET_DEVICES, emptySet()) ?: emptySet()),
+            cropLeft = prefs.getFloat(KEY_CROP_LEFT, 0f),
+            cropTop = prefs.getFloat(KEY_CROP_TOP, 0f),
+            cropRight = prefs.getFloat(KEY_CROP_RIGHT, 1f),
+            cropBottom = prefs.getFloat(KEY_CROP_BOTTOM, 1f)
         )
     }
 
@@ -61,13 +73,21 @@ class PreferencesRepository(context: Context) {
         val devMediaPath = prefs.getString(PREFIX_DEV_MEDIA_PATH + cleanAddress, null) ?: globalConfig.customMediaPath
         val devMediaType = prefs.getString(PREFIX_DEV_MEDIA_TYPE + cleanAddress, null) ?: globalConfig.customMediaType
         val devVideoDismiss = prefs.getString(PREFIX_DEV_VIDEO_DISMISS + cleanAddress, null) ?: globalConfig.videoDismissMode
+        val devCropLeft = if (prefs.contains(PREFIX_DEV_CROP_LEFT + cleanAddress)) prefs.getFloat(PREFIX_DEV_CROP_LEFT + cleanAddress, 0f) else globalConfig.cropLeft
+        val devCropTop = if (prefs.contains(PREFIX_DEV_CROP_TOP + cleanAddress)) prefs.getFloat(PREFIX_DEV_CROP_TOP + cleanAddress, 0f) else globalConfig.cropTop
+        val devCropRight = if (prefs.contains(PREFIX_DEV_CROP_RIGHT + cleanAddress)) prefs.getFloat(PREFIX_DEV_CROP_RIGHT + cleanAddress, 1f) else globalConfig.cropRight
+        val devCropBottom = if (prefs.contains(PREFIX_DEV_CROP_BOTTOM + cleanAddress)) prefs.getFloat(PREFIX_DEV_CROP_BOTTOM + cleanAddress, 1f) else globalConfig.cropBottom
 
         return globalConfig.copy(
             customDeviceName = devCustomName,
             animationTheme = devTheme,
             customMediaPath = devMediaPath,
             customMediaType = devMediaType,
-            videoDismissMode = devVideoDismiss
+            videoDismissMode = devVideoDismiss,
+            cropLeft = devCropLeft,
+            cropTop = devCropTop,
+            cropRight = devCropRight,
+            cropBottom = devCropBottom
         )
     }
 
@@ -83,6 +103,10 @@ class PreferencesRepository(context: Context) {
             .putString(PREFIX_DEV_MEDIA_PATH + cleanAddress, config.customMediaPath)
             .putString(PREFIX_DEV_MEDIA_TYPE + cleanAddress, config.customMediaType)
             .putString(PREFIX_DEV_VIDEO_DISMISS + cleanAddress, config.videoDismissMode)
+            .putFloat(PREFIX_DEV_CROP_LEFT + cleanAddress, config.cropLeft)
+            .putFloat(PREFIX_DEV_CROP_TOP + cleanAddress, config.cropTop)
+            .putFloat(PREFIX_DEV_CROP_RIGHT + cleanAddress, config.cropRight)
+            .putFloat(PREFIX_DEV_CROP_BOTTOM + cleanAddress, config.cropBottom)
             .apply()
     }
 
@@ -91,12 +115,24 @@ class PreferencesRepository(context: Context) {
         prefs.edit().putString(PREFIX_DEV_NAME + sanitizeAddress(deviceAddress), name).apply()
     }
 
-    fun saveDeviceMedia(deviceAddress: String, path: String?, type: String) {
+    fun saveDeviceMedia(
+        deviceAddress: String,
+        path: String?,
+        type: String,
+        cropLeft: Float = 0f,
+        cropTop: Float = 0f,
+        cropRight: Float = 1f,
+        cropBottom: Float = 1f
+    ) {
         if (deviceAddress.isBlank()) return
         val clean = sanitizeAddress(deviceAddress)
         prefs.edit()
             .putString(PREFIX_DEV_MEDIA_PATH + clean, path)
             .putString(PREFIX_DEV_MEDIA_TYPE + clean, type)
+            .putFloat(PREFIX_DEV_CROP_LEFT + clean, cropLeft)
+            .putFloat(PREFIX_DEV_CROP_TOP + clean, cropTop)
+            .putFloat(PREFIX_DEV_CROP_RIGHT + clean, cropRight)
+            .putFloat(PREFIX_DEV_CROP_BOTTOM + clean, cropBottom)
             .apply()
     }
 
@@ -135,10 +171,21 @@ class PreferencesRepository(context: Context) {
         prefs.edit().putString(KEY_ANIMATION_THEME, theme).apply()
     }
 
-    fun saveCustomMedia(path: String?, type: String) {
+    fun saveCustomMedia(
+        path: String?,
+        type: String,
+        cropLeft: Float = 0f,
+        cropTop: Float = 0f,
+        cropRight: Float = 1f,
+        cropBottom: Float = 1f
+    ) {
         prefs.edit()
             .putString(KEY_CUSTOM_MEDIA_PATH, path)
             .putString(KEY_CUSTOM_MEDIA_TYPE, type)
+            .putFloat(KEY_CROP_LEFT, cropLeft)
+            .putFloat(KEY_CROP_TOP, cropTop)
+            .putFloat(KEY_CROP_RIGHT, cropRight)
+            .putFloat(KEY_CROP_BOTTOM, cropBottom)
             .apply()
     }
 

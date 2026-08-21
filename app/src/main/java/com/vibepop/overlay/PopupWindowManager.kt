@@ -3,6 +3,7 @@ package com.vibepop.overlay
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -14,6 +15,7 @@ import android.view.WindowManager
 import com.vibepop.R
 import com.vibepop.data.model.DeviceBatteryState
 import com.vibepop.data.model.PopupConfig
+import com.vibepop.ui.PopupActivity
 import com.vibepop.util.PermissionHelper
 
 /**
@@ -25,7 +27,7 @@ object PopupWindowManager {
 
     private var windowManager: WindowManager? = null
     private var popupView: View? = null
-    private var autoDismissManager: PopupAutoDismissManager? = null
+    private var popupInteraction: PopupInteractionController? = null
     private var isShowing = false
 
     private var currentBinder: PopupViewBinder? = null
@@ -40,22 +42,25 @@ object PopupWindowManager {
         deviceState: DeviceBatteryState = DeviceBatteryState.mock(),
         config: PopupConfig = PopupConfig()
     ) {
-        // 若已有弹窗，先优雅清理
+        // 若已有弹窗，先优雅清理（同时联动关闭可能存在的锁屏穿透弹窗）
         dismissPopup(immediate = true)
 
         // 1. 检查当前是否处于锁屏或熄屏状态
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as? android.os.PowerManager
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager
         val isScreenOff = powerManager?.isInteractive == false
         val isLocked = keyguardManager?.isKeyguardLocked == true
+        val overlayAllowed = PermissionHelper.hasOverlayPermission(context)
 
+        // 锁屏或熄屏场景：Android 系统层级限制 TYPE_APPLICATION_OVERLAY 悬浮窗无法置于锁屏之上，
+        // 必须使用配置了 showWhenLocked 与 turnScreenOn 的 PopupActivity 穿透锁屏呈现弹窗
         if (isScreenOff || isLocked) {
-            Log.d(TAG, "Device is locked ($isLocked) or screen is off ($isScreenOff), launching PopupActivity")
-            com.vibepop.ui.PopupActivity.start(context, deviceState, config)
+            Log.d(TAG, "Device is locked ($isLocked) or screen is off ($isScreenOff), launching PopupActivity to penetrate lock screen")
+            PopupActivity.start(context, deviceState, config)
             return
         }
 
-        if (!PermissionHelper.hasOverlayPermission(context)) {
+        if (!overlayAllowed) {
             Log.w(TAG, "Cannot show popup: SYSTEM_ALERT_WINDOW permission missing")
             return
         }
@@ -64,13 +69,13 @@ object PopupWindowManager {
             val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
             windowManager = wm
 
-            // 1. 加载弹窗布局 (使用 ContextThemeWrapper 赋予 MaterialComponents 主题)
+            // 2. 加载弹窗布局 (使用 ContextThemeWrapper 赋予 MaterialComponents 主题)
             val themedContext = androidx.appcompat.view.ContextThemeWrapper(context, R.style.Theme_VibePop)
             val inflater = LayoutInflater.from(themedContext)
             val root = inflater.inflate(R.layout.layout_headset_popup, null)
             popupView = root
 
-            // 2. 窗口参数配置 (底部吸附 + 进出场动效 + 状态栏/导航栏穿透)
+            // 3. 窗口参数配置 (底部吸附 + 进出场动效 + 状态栏/导航栏穿透)
             val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             } else {
@@ -104,20 +109,13 @@ object PopupWindowManager {
                 }
             }
 
-            // 3. 动态计算屏幕尺寸，精准设定 40% 弹窗高度
-            val displayMetrics = context.resources.displayMetrics
-            val screenHeight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                wm.currentWindowMetrics.bounds.height()
-            } else {
-                displayMetrics.heightPixels
-            }
-            val targetPopupHeight = (screenHeight * 0.40f).toInt()
+            // 4. 动态计算屏幕尺寸，精准设定 40% 弹窗高度
             val cardView = root.findViewById<View>(R.id.cardPopup)
             cardView.layoutParams = cardView.layoutParams.apply {
-                height = targetPopupHeight
+                height = PopupMetrics.targetPopupHeight(context)
             }
 
-            // 4. 绑定数据与动画
+            // 5. 绑定数据与动画
             val binder = PopupViewBinder(root, config) {
                 dismissPopup()
             }
@@ -125,44 +123,28 @@ object PopupWindowManager {
             currentDeviceAddress = deviceState.deviceAddress
             binder.bind(deviceState)
 
-            // 4. 自动消退调度器
-            val isVideoOnComplete = (config.animationTheme == "great_victory" ||
-                    config.customMediaType == "video" ||
-                    config.customMediaPath?.lowercase()?.endsWith(".mp4") == true)
-                    && config.videoDismissMode == "on_complete"
-
-            val delayMillis = if (isVideoOnComplete) {
-                60_000L // 视频播放完自动消退模式：60秒作为防卡死安全保底
-            } else {
-                (config.autoDismissSeconds * 1000L).coerceAtLeast(2000L)
-            }
-
-            autoDismissManager = PopupAutoDismissManager(delayMillis) {
-                dismissPopup()
-            }
-
-            // 5. 下拉拖拽手势绑定
-            val touchListener = SlideDismissTouchListener(
-                targetView = cardView,
+            // 6. 下拉拖拽手势与自动消退统一控制器
+            val interaction = PopupInteractionController(
+                cardView = cardView,
                 onDismiss = { dismissPopup(immediate = true) },
-                onTouchStateChanged = { isInteracting ->
-                    if (isInteracting) {
-                        autoDismissManager?.pause()
-                    } else {
-                        autoDismissManager?.resume()
-                    }
-                }
+                dismissDelayMillis = config.resolveDismissDelayMillis()
             )
-            cardView.setOnTouchListener(touchListener)
+            popupInteraction = interaction
+            interaction.attach()
 
-            // 6. 挂载至 Window
+            // 7. 挂载至 Window
             wm.addView(root, params)
             isShowing = true
 
-            // 7. 启动自动消退倒计时
-            autoDismissManager?.start()
+            // 8. 熄屏状态下短暂点亮屏幕，保证用户看到弹窗
+            if (isScreenOff) {
+                wakeScreen(context)
+            }
 
-            // 8. 触觉震动反馈
+            // 9. 启动自动消退倒计时
+            interaction.startAutoDismiss()
+
+            // 10. 触觉震动反馈
             if (config.isVibrationEnabled) {
                 triggerHapticFeedback(context)
             }
@@ -196,12 +178,15 @@ object PopupWindowManager {
      */
     @Synchronized
     fun dismissPopup(immediate: Boolean = false) {
+        // 悬浮窗与锁屏穿透弹窗共用生命周期：任何关闭请求都应联动关闭 PopupActivity
+        PopupActivity.dismissIfShowing()
+
+        popupInteraction?.cancel()
+        popupInteraction = null
+
         if (!isShowing && popupView == null) return
 
         try {
-            autoDismissManager?.cancel()
-            autoDismissManager = null
-
             currentBinder?.release()
             currentBinder = null
             currentDeviceAddress = null
@@ -220,6 +205,24 @@ object PopupWindowManager {
         } finally {
             popupView = null
             isShowing = false
+        }
+    }
+
+    /**
+     * 熄屏状态下短暂点亮屏幕 (配合 FLAG_SHOW_WHEN_LOCKED 的悬浮窗展示)
+     */
+    private fun wakeScreen(context: Context) {
+        try {
+            val powerManager = context.getSystemService(Context.POWER_SERVICE) as? PowerManager ?: return
+            @Suppress("DEPRECATION")
+            powerManager.newWakeLock(
+                PowerManager.SCREEN_BRIGHT_WAKE_LOCK or
+                        PowerManager.ACQUIRE_CAUSES_WAKEUP or
+                        PowerManager.ON_AFTER_RELEASE,
+                "VibePop:OverlayWakeLock"
+            )?.acquire(3000)
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to wake screen: ${e.message}")
         }
     }
 
