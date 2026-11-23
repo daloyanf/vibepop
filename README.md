@@ -1,5 +1,7 @@
 # VibePop - 蓝牙耳机自定义拟真弹窗框架
 
+[中文](README.md) · [English](README.en.md) · [Français](README.fr.md)
+
 [![Version](https://img.shields.io/badge/Version-1.1.2-blue.svg)](https://github.com/daloyanf/vibepop/releases/tag/v1.1.2)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Android%208.0%2B-green.svg)](https://developer.android.com)
