@@ -1,6 +1,6 @@
 # VibePop — des popups réalistes pour vos écouteurs Bluetooth
 
-[English](README.en.md) · **Français** · [中文](README.md)
+[English](README.md) · **Français** · [中文](README.zh-CN.md)
 
 [![Version](https://img.shields.io/badge/Version-1.1.2-blue.svg)](https://github.com/daloyanf/vibepop/releases/tag/v1.1.2)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
