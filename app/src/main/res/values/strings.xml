@@ -91,7 +91,7 @@
     <string name="rename_cleared_toast">已清空自定义名称（弹窗将显示系统原名）</string>
 
     <!-- 设备列表 -->
-    <string name="device_empty_hint">未发现已配对的蓝牙设备。请先在系统蓝牙设置中连接配对，并在此处勾选启用。</string>
+    <string name="device_empty_hint">未发现已配对的蓝牙设备。请先在系统蓝牙设置中连接配对，之后即可在此处单独配置。</string>
     <string name="device_enabled_status">✅ 已开启弹窗响应</string>
     <string name="device_disabled_status">⏸️ 未开启（不响应） • MAC: %1$s</string>
     <string name="device_need_enable_toast">请先开启右侧响应开关，再进行动效配置</string>
@@ -101,7 +101,12 @@
 
     <!-- 动效工坊目标切换 -->
     <string name="theme_target_global">🌐 全局默认</string>
+    <string name="theme_target_global_plain">全局设置</string>
+    <string name="devices_paired_title">已配对耳机</string>
+    <string name="devices_global_summary">动效：%1$s</string>
+    <string name="btn_back">返回</string>
     <string name="theme_target_device">🎧 %1$s</string>
+    <string name="theme_target_disabled_hint">该耳机的弹窗响应未开启，请到「设备管理」中启用</string>
     <string name="spinner_arrow">%1$s  ▼</string>
 
     <!-- 列表拼接分隔符 -->
@@ -137,20 +142,36 @@
 
     <!-- 动效工坊 -->
     <string name="themes_title">🎨 动效工坊</string>
+    <string name="themes_subtitle">为每只耳机单独设置专属动效</string>
+    <string name="themes_target_label">配置目标</string>
+    <string name="themes_section_hint">耳机连接时播放的媒体</string>
+    <string name="cd_preview_theme">预览此动效</string>
+    <string name="preview_need_media">请先导入一个本地媒体文件</string>
+    <string name="btn_close_drawer">关闭面板</string>
+    <string name="media_current_title">当前媒体</string>
+    <string name="media_default_active">默认动效 · 点击选择自己的媒体</string>
+    <string name="media_legacy_preset">当前使用内置视觉：%1$s</string>
+    <string name="media_change_action">更换</string>
+
+    <!-- 内置视觉 -->
+    <string name="media_library_title">内置视觉</string>
+    <string name="media_library_hint">点击一个视觉，将它用于当前目标</string>
+    <string name="media_builtin_open_ear">开放式耳机视频</string>
     <string name="themes_popup_name">弹窗显示名称</string>
     <string name="themes_rename">✏️ 重命名</string>
     <string name="themes_section_title">动效主题</string>
     <string name="theme_classic_title">经典 AirPods Pro</string>
     <string name="theme_classic_desc">拟真开盖、耳机出仓动效与右上角电量指示</string>
     <string name="theme_victory_title">伟大胜利</string>
-    <string name="theme_victory_desc">全景高光胜利动效（自带震撼原声音效）</string>
+    <string name="theme_victory_desc">深色背景的循环动画（无声）</string>
     <string name="theme_custom_title">本地多媒体导入</string>
     <string name="theme_custom_desc">点击下方按钮导入 MP4 视频或高清壁纸</string>
     <string name="theme_import_section_desc">支持 MP4 视频（可带原声音效）、GIF 动图、WebP、PNG、JPG</string>
     <string name="btn_pick_media">🎬 从相册选择视频 / 图片 / 动图</string>
     <string name="theme_video_rules_title">🎬 视频播放与关闭规则</string>
-    <string name="video_dismiss_on_complete">单次播放完毕后自动关闭（推荐）</string>
-    <string name="video_dismiss_timer">固定倒计时关闭（循环播放直至计时结束）</string>
+    <string name="video_dismiss_on_complete">播放一次后关闭</string>
+    <string name="video_dismiss_timer">循环播放，直到倒计时结束</string>
+    <string name="video_loop_hint">倒计时使用全局设置中的弹窗停留时长。</string>
 
     <!-- 设备管理 -->
     <string name="devices_title">🎧 设备管理</string>
@@ -161,7 +182,7 @@
 
     <!-- 设置与权限 -->
     <string name="settings_title">⚙️ 设置与权限</string>
-    <string name="settings_subtitle">系统必要权限检测、音频输出模式与弹窗停留时长设置</string>
+    <string name="settings_subtitle">监听服务与系统权限</string>
     <string name="settings_perms_title">🛡️ 系统必要权限</string>
     <string name="settings_perms_desc">请确保开启以下必要权限，以保证在锁屏、桌面或应用内均可正常弹出</string>
     <string name="perm_media_title">相册与多媒体访问权限</string>

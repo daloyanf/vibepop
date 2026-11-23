@@ -17,14 +17,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <include
-            android:id="@+id/tabDashboardLayout"
-            layout="@layout/layout_tab_dashboard" />
-
-        <include
-            android:id="@+id/tabThemesLayout"
-            layout="@layout/layout_tab_themes" />
-
-        <include
             android:id="@+id/tabDevicesLayout"
             layout="@layout/layout_tab_devices" />
 

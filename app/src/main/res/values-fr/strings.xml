@@ -31,7 +31,7 @@
     <string name="battery_unknown">--%</string>
     <string name="device_name_fallback">Écouteurs Bluetooth</string>
     <string name="device_name_unknown">Appareil inconnu</string>
-    <string name="name_empty_placeholder">Vide</string>
+    <string name="name_empty_placeholder">Nom de l’appareil</string>
 
     <!-- Console -->
     <string name="dash_service_running">Service actif</string>
@@ -39,11 +39,11 @@
     <string name="dash_service_sub_running">Un popup apparaît en bas de l’écran dès qu’un écouteur coché se connecte</string>
     <string name="dash_service_sub_stopped">Activez l’interrupteur pour surveiller les connexions des écouteurs</string>
     <string name="dash_devices_enabled">Activés (%1$d)</string>
-    <string name="dash_devices_none">Aucun appareil</string>
+    <string name="dash_devices_none">Aucun</string>
     <string name="dash_missing_perm_summary">Permission manquante : %1$s. Touchez pour configurer</string>
     <string name="dash_bt_off_warning">⚠️ Le Bluetooth est désactivé — touchez pour l’activer</string>
     <string name="dash_theme_classic">AirPods Pro</string>
-    <string name="dash_theme_great_victory">Grande Victoire</string>
+    <string name="dash_theme_great_victory">Écouteurs open-ear</string>
     <string name="dash_theme_custom">Média personnalisé</string>
 
     <!-- Types de médias -->
@@ -91,7 +91,7 @@
     <string name="rename_cleared_toast">Nom personnalisé effacé (le nom Bluetooth sera utilisé)</string>
 
     <!-- Appareils -->
-    <string name="device_empty_hint">Aucun appareil Bluetooth appairé. Appairez vos écouteurs dans les réglages Bluetooth du système, puis activez-les ici.</string>
+    <string name="device_empty_hint">Aucun appareil Bluetooth appairé. Appairez vos écouteurs dans les réglages Bluetooth du système : ils apparaîtront ici pour être personnalisés.</string>
     <string name="device_enabled_status">✅ Popup activé</string>
     <string name="device_disabled_status">⏸️ Désactivé (aucun popup) • MAC : %1$s</string>
     <string name="device_need_enable_toast">Activez l’interrupteur à droite avant de choisir une animation</string>
@@ -101,7 +101,12 @@
 
     <!-- Sélecteur de cible du thème -->
     <string name="theme_target_global">🌐 Global</string>
+    <string name="theme_target_global_plain">Réglages globaux</string>
+    <string name="devices_paired_title">Écouteurs appairés</string>
+    <string name="devices_global_summary">Animation : %1$s</string>
+    <string name="btn_back">Retour</string>
     <string name="theme_target_device">🎧 %1$s</string>
+    <string name="theme_target_disabled_hint">Popup désactivé pour cet appareil. Activez-le dans l’onglet Appareils.</string>
     <string name="spinner_arrow">%1$s  ▼</string>
 
     <!-- Séparateur de liste -->
@@ -112,7 +117,7 @@
     <string name="notification_channel_desc">Maintient le service de surveillance VibePop actif en arrière-plan</string>
 
     <!-- Navigation basse -->
-    <string name="nav_dashboard">Console</string>
+    <string name="nav_dashboard">Accueil</string>
     <string name="nav_themes">Atelier</string>
     <string name="nav_devices">Appareils</string>
     <string name="nav_settings">Réglages</string>
@@ -137,20 +142,36 @@
 
     <!-- Écran Atelier -->
     <string name="themes_title">🎨 Atelier</string>
+    <string name="themes_subtitle">Donnez à chaque écouteur sa propre animation</string>
+    <string name="themes_target_label">Personnaliser</string>
+    <string name="themes_section_hint">Média joué à la connexion de l’écouteur</string>
+    <string name="cd_preview_theme">Aperçu de cette animation</string>
+    <string name="preview_need_media">Importez d’abord un média</string>
+    <string name="btn_close_drawer">Fermer le panneau</string>
+    <string name="media_current_title">Média actuel</string>
+    <string name="media_default_active">Animation par défaut · Touchez pour choisir votre média</string>
+    <string name="media_legacy_preset">Visuel intégré actif : %1$s</string>
+    <string name="media_change_action">Changer</string>
+
+    <!-- Visuels intégrés -->
+    <string name="media_library_title">Visuels intégrés</string>
+    <string name="media_library_hint">Touchez un visuel pour l’utiliser sur cette cible</string>
+    <string name="media_builtin_open_ear">Vidéo open-ear</string>
     <string name="themes_popup_name">Nom du popup</string>
     <string name="themes_rename">✏️ Renommer</string>
     <string name="themes_section_title">Thème d’animation</string>
     <string name="theme_classic_title">AirPods Pro classique</string>
     <string name="theme_classic_desc">Ouverture du boîtier, sortie des écouteurs et pastille de batterie en haut à droite</string>
-    <string name="theme_victory_title">Grande Victoire</string>
-    <string name="theme_victory_desc">Animation panoramique de victoire, avec sa bande-son percutante</string>
+    <string name="theme_victory_title">Écouteurs open-ear</string>
+    <string name="theme_victory_desc">Animation en boucle sur fond sombre, sans son</string>
     <string name="theme_custom_title">Vos propres médias</string>
     <string name="theme_custom_desc">Utilisez le bouton ci-dessous pour importer une vidéo MP4 ou un fond d’écran HD</string>
     <string name="theme_import_section_desc">Prend en charge les vidéos MP4 (avec son), les GIF animés, WebP, PNG et JPG</string>
     <string name="btn_pick_media">🎬 Choisir un média</string>
     <string name="theme_video_rules_title">🎬 Lecture et fermeture des vidéos</string>
-    <string name="video_dismiss_on_complete">Fermer après une lecture (recommandé)</string>
-    <string name="video_dismiss_timer">Fermer à la fin du compte à rebours (lecture en boucle)</string>
+    <string name="video_dismiss_on_complete">Lire une fois, puis fermer</string>
+    <string name="video_dismiss_timer">Boucler jusqu’à la fin du délai</string>
+    <string name="video_loop_hint">Le délai du compte à rebours est celui des réglages globaux.</string>
 
     <!-- Écran Appareils -->
     <string name="devices_title">🎧 Appareils</string>
@@ -161,7 +182,7 @@
 
     <!-- Écran Réglages -->
     <string name="settings_title">⚙️ Réglages et permissions</string>
-    <string name="settings_subtitle">Permissions système requises, sortie audio et durée d’affichage du popup</string>
+    <string name="settings_subtitle">Service de surveillance et permissions système</string>
     <string name="settings_perms_title">🛡️ Permissions requises</string>
     <string name="settings_perms_desc">Activez ces permissions pour que le popup s’affiche sur l’écran verrouillé, l’accueil ou dans toute app</string>
     <string name="perm_media_title">Accès aux photos et médias</string>

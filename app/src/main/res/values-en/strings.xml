@@ -43,7 +43,7 @@
     <string name="dash_missing_perm_summary">Missing permission: %1$s. Tap to set it up</string>
     <string name="dash_bt_off_warning">⚠️ Bluetooth is off — tap to turn it on</string>
     <string name="dash_theme_classic">AirPods Pro</string>
-    <string name="dash_theme_great_victory">Great Victory</string>
+    <string name="dash_theme_great_victory">Open-ear earbuds</string>
     <string name="dash_theme_custom">Custom media</string>
 
     <!-- Media types -->
@@ -91,7 +91,7 @@
     <string name="rename_cleared_toast">Custom name cleared (the Bluetooth name will be used)</string>
 
     <!-- Devices -->
-    <string name="device_empty_hint">No paired Bluetooth device found. Pair your earbuds in the system Bluetooth settings, then enable them here.</string>
+    <string name="device_empty_hint">No paired Bluetooth device found. Pair your earbuds in the system Bluetooth settings and they will show up here for customisation.</string>
     <string name="device_enabled_status">✅ Popup enabled</string>
     <string name="device_disabled_status">⏸️ Off (no popup) • MAC: %1$s</string>
     <string name="device_need_enable_toast">Turn on the switch on the right before choosing an animation</string>
@@ -101,7 +101,12 @@
 
     <!-- Theme target switcher -->
     <string name="theme_target_global">🌐 Global default</string>
+    <string name="theme_target_global_plain">Global settings</string>
+    <string name="devices_paired_title">Paired earbuds</string>
+    <string name="devices_global_summary">Animation: %1$s</string>
+    <string name="btn_back">Back</string>
     <string name="theme_target_device">🎧 %1$s</string>
+    <string name="theme_target_disabled_hint">Popups are off for this earbud. Enable it in the Devices tab.</string>
     <string name="spinner_arrow">%1$s  ▼</string>
 
     <!-- List separator -->
@@ -137,20 +142,36 @@
 
     <!-- Animation studio -->
     <string name="themes_title">🎨 Animation studio</string>
+    <string name="themes_subtitle">Give each earbud its own animation</string>
+    <string name="themes_target_label">Customising</string>
+    <string name="themes_section_hint">Media played when the earbud connects</string>
+    <string name="cd_preview_theme">Preview this animation</string>
+    <string name="preview_need_media">Import a media file first</string>
+    <string name="btn_close_drawer">Close panel</string>
+    <string name="media_current_title">Current media</string>
+    <string name="media_default_active">Default animation · Tap to choose your media</string>
+    <string name="media_legacy_preset">Built-in visual active: %1$s</string>
+    <string name="media_change_action">Change</string>
+
+    <!-- Included visuals -->
+    <string name="media_library_title">Included visuals</string>
+    <string name="media_library_hint">Tap a visual to use it for this target</string>
+    <string name="media_builtin_open_ear">Open-ear video</string>
     <string name="themes_popup_name">Popup name</string>
     <string name="themes_rename">✏️ Rename</string>
     <string name="themes_section_title">Animation theme</string>
     <string name="theme_classic_title">Classic AirPods Pro</string>
     <string name="theme_classic_desc">Lifelike lid opening, earbuds leaving the case and a battery badge in the corner</string>
-    <string name="theme_victory_title">Great Victory</string>
-    <string name="theme_victory_desc">Panoramic victory animation with its own punchy soundtrack</string>
+    <string name="theme_victory_title">Open-ear earbuds</string>
+    <string name="theme_victory_desc">Looping animation on a dark background, silent</string>
     <string name="theme_custom_title">Your own media</string>
     <string name="theme_custom_desc">Use the button below to import an MP4 video or a high-res wallpaper</string>
     <string name="theme_import_section_desc">Supports MP4 video (with sound), animated GIF, WebP, PNG and JPG</string>
     <string name="btn_pick_media">🎬 Pick from the gallery</string>
     <string name="theme_video_rules_title">🎬 Video playback &amp; dismiss rules</string>
-    <string name="video_dismiss_on_complete">Close after playing once (recommended)</string>
-    <string name="video_dismiss_timer">Close on the countdown (loops until the timer ends)</string>
+    <string name="video_dismiss_on_complete">Play once, then close</string>
+    <string name="video_dismiss_timer">Loop until the timer ends</string>
+    <string name="video_loop_hint">The countdown uses the duration set in Global settings.</string>
 
     <!-- Devices screen -->
     <string name="devices_title">🎧 Devices</string>
@@ -161,7 +182,7 @@
 
     <!-- Settings screen -->
     <string name="settings_title">⚙️ Settings &amp; permissions</string>
-    <string name="settings_subtitle">Required system permissions, audio output mode and popup duration</string>
+    <string name="settings_subtitle">Monitor service and system permissions</string>
     <string name="settings_perms_title">🛡️ Required permissions</string>
     <string name="settings_perms_desc">Enable these permissions so the popup can appear on the lock screen, the home screen or in any app</string>
     <string name="perm_media_title">Photos &amp; media access</string>
