@@ -251,6 +251,50 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /** Copy an included resource into private storage and use it as the target media. */
+    fun applyBundledVisual(context: Context, address: String?, rawResId: Int, fileName: String, type: String): Boolean {
+        return try {
+            val suffix = address?.let { "_" + it.replace(":", "_").uppercase() } ?: ""
+            val extension = if (type == "video") ".mp4" else ".gif"
+            val destFile = File(context.filesDir, "included_${fileName}${suffix}$extension")
+            context.resources.openRawResource(rawResId).use { input ->
+                FileOutputStream(destFile).use { output -> input.copyTo(output) }
+            }
+
+            if (address.isNullOrBlank()) {
+                repository.saveCustomMedia(destFile.absolutePath, type, 0f, 0f, 1f, 1f)
+                repository.saveAnimationTheme("custom_media")
+                _popupConfig.value = _popupConfig.value?.copy(
+                    animationTheme = "custom_media",
+                    customMediaPath = destFile.absolutePath,
+                    customMediaType = type,
+                    cropLeft = 0f,
+                    cropTop = 0f,
+                    cropRight = 1f,
+                    cropBottom = 1f
+                )
+            } else {
+                val current = repository.getDevicePopupConfig(address)
+                repository.saveDevicePopupConfig(
+                    address,
+                    current.copy(
+                        animationTheme = "custom_media",
+                        customMediaPath = destFile.absolutePath,
+                        customMediaType = type,
+                        cropLeft = 0f,
+                        cropTop = 0f,
+                        cropRight = 1f,
+                        cropBottom = 1f
+                    )
+                )
+                refreshBondedDevices(context)
+            }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     fun toggleTargetDevice(address: String) {
         val currentTargets = (_popupConfig.value?.targetDeviceAddresses ?: emptySet()).toMutableSet()
         if (currentTargets.contains(address)) {
@@ -295,6 +339,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             isCharging = false
         )
         PopupWindowManager.showPopup(context, mockState, config)
+    }
+
+    /**
+     * 预览指定配置（用于「动效工坊」里每个主题的试听按钮），不写回任何偏好
+     */
+    fun previewPopup(context: Context, config: PopupConfig, deviceState: DeviceBatteryState) {
+        PopupWindowManager.showPopup(context, deviceState, config)
     }
 
     /**
@@ -357,4 +408,3 @@ internal fun detectMediaType(mimeTypeRaw: String?, path: String?): String {
     if (mime.contains("json") || p.endsWith(".json")) return "lottie"
     return "unsupported"
 }
-

@@ -37,7 +37,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
-                android:contentDescription="Custom Background Image" />
+                android:contentDescription="@string/popup_desc_background" />
 
             <!-- Lottie 矢量动画 (.json) -->
             <com.airbnb.lottie.LottieAnimationView
@@ -75,7 +75,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="2dp"
                 android:src="@drawable/ic_pill_bar"
-                android:contentDescription="Drag to dismiss" />
+                android:contentDescription="@string/popup_desc_drag" />
 
             <!-- 顶部信息栏：左侧设备信息与连接状态，右上角真实电量胶囊徽标 -->
             <LinearLayout
@@ -155,7 +155,7 @@
                         android:layout_height="14dp"
                         android:src="@drawable/ic_battery"
                         app:tint="#34C759"
-                        android:contentDescription="Battery Level" />
+                        android:contentDescription="@string/popup_desc_battery" />
 
                     <TextView
                         android:id="@+id/tvBatteryLevel"
@@ -178,7 +178,7 @@
                         android:layout_marginStart="2dp"
                         android:src="@drawable/ic_lightning"
                         android:visibility="gone"
-                        android:contentDescription="Charging" />
+                        android:contentDescription="@string/popup_desc_charging" />
                 </LinearLayout>
             </LinearLayout>
 

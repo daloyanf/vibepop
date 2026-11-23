@@ -3,6 +3,8 @@ package com.vibepop.ui
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -16,10 +18,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.vibepop.R
+import com.vibepop.data.model.DeviceBatteryState
+import com.vibepop.data.model.PopupConfig
 import com.vibepop.databinding.ActivityMainBinding
+import com.vibepop.databinding.LayoutTabThemesBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.vibepop.service.HeadsetMonitorService
+import com.vibepop.util.MediaThumbnailLoader
 import com.vibepop.util.PermissionHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,10 +39,12 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     private var currentThemeTargetAddress: String? = null
-    private var themeTargetList = listOf<ThemeTargetItem>()
-    private var isProgrammaticSpinnerChange = false
+    private var detailSheet: BottomSheetDialog? = null
+    private lateinit var detail: LayoutTabThemesBinding
     private var hasPromptedBluetoothDialog = false
     private var bluetoothReceiverRegistered = false
+    private var bondedDeviceItems = listOf<BondedDeviceItem>()
+    private var customThumbKey: String? = null
 
     private val bluetoothStateReceiver = object : android.content.BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -119,7 +133,6 @@ class MainActivity : AppCompatActivity() {
         HeadsetMonitorService.start(this)
         setupNavigation()
         setupDashboardTab()
-        setupThemesTab()
         setupDevicesTab()
         setupSettingsTab()
         observeViewModel()
@@ -198,55 +211,81 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * 底部导航栏切换逻辑
+     * 底部导航：Appareils / Réglages, plus la page de détail d'une cible
      */
+    private fun com.google.android.material.switchmaterial.SwitchMaterial.setOnChangeListenerForService() {
+        setOnCheckedChangeListener { buttonView, isChecked ->
+            if (buttonView.isPressed) {
+                viewModel.setServiceEnabled(this@MainActivity, isChecked)
+            }
+        }
+    }
+
     private fun setupNavigation() {
         binding.bottomNav.setOnItemSelectedListener { item ->
             switchTab(item.itemId)
             true
         }
-
-        // 默认激活控制台 Tab
-        switchTab(R.id.nav_dashboard)
+        switchTab(R.id.nav_devices)
+        renderBondedDevices(bondedDeviceItems)
     }
 
     private fun switchTab(itemId: Int) {
-        binding.tabDashboardLayout.root.visibility = if (itemId == R.id.nav_dashboard) View.VISIBLE else View.GONE
-        binding.tabThemesLayout.root.visibility = if (itemId == R.id.nav_themes) View.VISIBLE else View.GONE
         binding.tabDevicesLayout.root.visibility = if (itemId == R.id.nav_devices) View.VISIBLE else View.GONE
         binding.tabSettingsLayout.root.visibility = if (itemId == R.id.nav_settings) View.VISIBLE else View.GONE
-
-        if (itemId == R.id.nav_themes) {
-            loadThemeTargetUI(currentThemeTargetAddress)
-        }
     }
+
+    /** 打开某个目标的配置抽屉；address 为 null 表示全局默认 */
+    private fun openDetail(address: String?) {
+        ensureDetailSheet()
+        currentThemeTargetAddress = address
+
+        detail.tvDetailTitle.text = if (address == null) {
+            getString(R.string.theme_target_global_plain)
+        } else {
+            bondedDeviceItems.firstOrNull { it.address == address }?.name
+                ?: getString(R.string.rename_target_fallback)
+        }
+        detail.cardGlobalPopupOptions.visibility =
+            if (address == null) View.VISIBLE else View.GONE
+
+        loadThemeTargetUI(address)
+        detailSheet?.show()
+    }
+
+    private fun closeDetail() {
+        detailSheet?.dismiss()
+    }
+
+    private fun ensureDetailSheet() {
+        if (detailSheet != null) return
+        detail = LayoutTabThemesBinding.inflate(layoutInflater)
+        detailSheet = BottomSheetDialog(this).apply {
+            setContentView(detail.root)
+            findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)?.apply {
+                setBackgroundResource(R.drawable.bg_bottom_sheet)
+                clipToOutline = true
+            }
+            behavior.isFitToContents = true
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            behavior.skipCollapsed = true
+        }
+        bindDetailSheet()
+    }
+
 
     /**
      * 1. 🏠 控制台面板交互绑定
      */
     private fun setupDashboardTab() {
-        val dash = binding.tabDashboardLayout
+        // Service de surveillance (onglet Réglages)
+        binding.tabSettingsLayout.switchService.setOnChangeListenerForService()
 
-        // 模拟弹窗一键测试
-        dash.btnTestPopup.setOnClickListener {
-            if (!PermissionHelper.hasOverlayPermission(this)) {
-                Toast.makeText(this, getString(R.string.overlay_needed_toast), Toast.LENGTH_SHORT).show()
-                binding.bottomNav.selectedItemId = R.id.nav_settings
-                PermissionHelper.requestOverlayPermission(this)
-                return@setOnClickListener
-            }
-            viewModel.triggerMockPopup(applicationContext)
-        }
+        // Entrée « Réglages globaux »
+        binding.tabDevicesLayout.rowGlobalSettings.setOnClickListener { openDetail(null) }
 
-        // 服务开关
-        dash.switchService.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isPressed) {
-                viewModel.setServiceEnabled(this, isChecked)
-            }
-        }
-
-        // 权限警告条点击 -> 切换至设置/权限 Tab 或引导开启蓝牙
-        dash.cardPermissionWarning.setOnClickListener {
+        // Bandeau permissions
+        binding.tabDevicesLayout.cardPermissionWarning.setOnClickListener {
             if (!PermissionHelper.isBluetoothEnabled(this)) {
                 PermissionHelper.promptEnableBluetooth(this)
             } else {
@@ -254,45 +293,38 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // 声音模式切换
-        dash.switchForceSpeakerphone.setOnCheckedChangeListener { buttonView, isChecked ->
+    }
+
+    /**
+     * 2. 🎨 配置抽屉交互绑定（首次打开时调用一次）
+     */
+    private fun bindDetailSheet() {
+        val themes = detail
+
+        // Retour depuis le drawer
+        themes.btnBackToDevices.setOnClickListener { closeDetail() }
+
+        // Aperçu de la cible courante
+        themes.btnTestPopup.setOnClickListener { previewCurrentTarget() }
+
+        // Sélection d'un média : la carte entière et son action ouvrent le sélecteur.
+        themes.cardCurrentMedia.setOnClickListener { requestMediaAndPick() }
+        themes.btnChooseCurrentMedia.setOnClickListener { requestMediaAndPick() }
+
+        // Sortie haut-parleur (option globale)
+        themes.switchForceSpeakerphone.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) {
                 viewModel.updateForceSpeakerphone(isChecked)
             }
         }
 
-        // 弹窗时长滑动条
-        dash.sliderDismissDelay.addOnChangeListener { _, value, fromUser ->
+        // Durée d'affichage (option globale)
+        themes.sliderDismissDelay.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
                 val seconds = value.toInt()
-                dash.tvDismissDelayLabel.text = getString(R.string.setting_dismiss_delay, seconds)
+                themes.tvDismissDelayLabel.text = getString(R.string.setting_dismiss_delay, seconds)
                 viewModel.updateDismissSeconds(seconds)
             }
-        }
-
-        // 快捷导航按钮
-        dash.btnQuickGoThemes.setOnClickListener {
-            binding.bottomNav.selectedItemId = R.id.nav_themes
-        }
-        dash.btnQuickGoDevices.setOnClickListener {
-            binding.bottomNav.selectedItemId = R.id.nav_devices
-        }
-    }
-
-    /**
-     * 2. 🎨 动效工坊面板交互绑定
-     */
-    private fun setupThemesTab() {
-        val themes = binding.tabThemesLayout
-
-        themes.cardThemeClassic.setOnClickListener {
-            applyThemeToCurrentTarget("classic_airpods")
-        }
-        themes.cardThemeGreatVictory.setOnClickListener {
-            applyThemeToCurrentTarget("great_victory")
-        }
-        themes.cardThemeCustom.setOnClickListener {
-            applyThemeToCurrentTarget("custom_media")
         }
 
         // 修改弹窗显示名称重命名
@@ -301,11 +333,6 @@ class MainActivity : AppCompatActivity() {
         }
         themes.cardThemeDeviceName.setOnClickListener {
             showRenameDialog()
-        }
-
-        // 从相册选择
-        themes.btnPickFromGallery.setOnClickListener {
-            requestMediaAndPick()
         }
 
         // 视频消退规则
@@ -319,6 +346,116 @@ class MainActivity : AppCompatActivity() {
                 viewModel.saveDevicePopupConfig(this, address, devConfig.copy(videoDismissMode = mode))
             }
         }
+
+        // Visuels livrés avec l'application
+        buildIncludedVisualLibrary()
+    }
+
+    /** Visuel intégré depuis res/raw, appliqué comme média personnalisé à la cible. */
+    private data class IncludedVisual(
+        val labelRes: Int,
+        val rawRes: Int,
+        val fileName: String,
+        val mediaType: String
+    )
+
+    private val includedVisuals = listOf(
+        IncludedVisual(
+            R.string.media_builtin_open_ear,
+            R.raw.video_great_victory,
+            "open_ear_loop",
+            "video"
+        )
+    )
+
+    private fun buildIncludedVisualLibrary() {
+        val container = detail.layoutMediaLibrary
+        if (container.childCount > 0) return
+
+        val density = resources.displayMetrics.density
+        val size = (88 * density).toInt()
+        val gap = (12 * density).toInt()
+
+        for (visual in includedVisuals) {
+            val item = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = android.view.Gravity.CENTER_HORIZONTAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { marginEnd = gap }
+                isClickable = true
+                isFocusable = true
+                contentDescription = getString(visual.labelRes)
+                setOnClickListener { applyIncludedVisual(visual) }
+            }
+
+            val preview = ImageView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(size, size)
+                scaleType = ImageView.ScaleType.CENTER_CROP
+                setBackgroundResource(R.drawable.bg_media_thumb)
+                clipToOutline = true
+                if (visual.mediaType == "video") {
+                    setImageResource(R.drawable.ic_play)
+                    setColorFilter(ContextCompat.getColor(this@MainActivity, R.color.primary))
+                    setPadding((28 * density).toInt(), (28 * density).toInt(), (28 * density).toInt(), (28 * density).toInt())
+                } else {
+                    setImageBitmap(decodeIncludedThumbnail(visual.rawRes, size))
+                }
+            }
+
+            val label = TextView(this).apply {
+                text = getString(visual.labelRes)
+                setTextColor(ContextCompat.getColor(this@MainActivity, R.color.text_secondary))
+                textSize = 10f
+                gravity = android.view.Gravity.CENTER
+                maxLines = 2
+                layoutParams = LinearLayout.LayoutParams(
+                    size,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { topMargin = (6 * density).toInt() }
+            }
+
+            item.addView(preview)
+            item.addView(label)
+            container.addView(item)
+        }
+    }
+
+    private fun decodeIncludedThumbnail(rawRes: Int, targetPx: Int): android.graphics.Bitmap? {
+        return try {
+            val bounds = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            android.graphics.BitmapFactory.decodeResource(resources, rawRes, bounds)
+            val shortest = minOf(bounds.outWidth, bounds.outHeight)
+            var sample = 1
+            while (shortest / (sample * 2) >= targetPx) {
+                sample *= 2
+            }
+            android.graphics.BitmapFactory.decodeResource(
+                resources,
+                rawRes,
+                android.graphics.BitmapFactory.Options().apply { inSampleSize = sample }
+            )
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun applyIncludedVisual(visual: IncludedVisual) {
+        val address = currentThemeTargetAddress
+        val applied = viewModel.applyBundledVisual(
+            applicationContext,
+            address,
+            visual.rawRes,
+            visual.fileName,
+            visual.mediaType
+        )
+        if (!applied) {
+            Toast.makeText(this, getString(R.string.import_failed), Toast.LENGTH_SHORT).show()
+            return
+        }
+        loadThemeTargetUI(address)
+        previewCurrentTarget()
     }
 
     private fun showRenameDialog() {
@@ -356,7 +493,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val targetTitle = if (address == null) getString(R.string.rename_global_default) else {
-            themeTargetList.find { it.address == address }?.title ?: getString(R.string.rename_target_fallback)
+            bondedDeviceItems.firstOrNull { it.address == address }?.name ?: getString(R.string.rename_target_fallback)
         }
 
         com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
@@ -371,7 +508,7 @@ class MainActivity : AppCompatActivity() {
                     val devConfig = viewModel.getDevicePopupConfig(address)
                     viewModel.saveDevicePopupConfig(this, address, devConfig.copy(customDeviceName = newName))
                 }
-                binding.tabThemesLayout.tvCurrentTargetDeviceName.text = if (newName.isNotBlank()) newName else getString(R.string.name_empty_placeholder)
+                detail.tvCurrentTargetDeviceName.text = if (newName.isNotBlank()) newName else getString(R.string.name_empty_placeholder)
                 Toast.makeText(
                     this,
                     if (newName.isNotBlank()) getString(R.string.rename_updated_toast, newName) else getString(R.string.rename_cleared_toast),
@@ -382,90 +519,6 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun applyThemeToCurrentTarget(theme: String) {
-        val address = currentThemeTargetAddress
-        if (address == null) {
-            viewModel.updateAnimationTheme(theme)
-            loadThemeTargetUI(null)
-        } else {
-            val devConfig = viewModel.getDevicePopupConfig(address)
-            val updated = if (theme != "custom_media") {
-                devConfig.copy(animationTheme = theme, customMediaPath = null, customMediaType = "preset")
-            } else {
-                devConfig.copy(animationTheme = theme)
-            }
-            viewModel.saveDevicePopupConfig(this, address, updated)
-            loadThemeTargetUI(address)
-        }
-    }
-
-    private fun setupThemesDropdown(devices: List<BondedDeviceItem>) {
-        val spinner = binding.tabThemesLayout.spinnerThemeTarget
-
-        val items = mutableListOf<ThemeTargetItem>()
-        items.add(ThemeTargetItem(getString(R.string.theme_target_global), null))
-        for (device in devices) {
-            if (device.isSelected) {
-                items.add(ThemeTargetItem(getString(R.string.theme_target_device, device.name), device.address))
-            }
-        }
-        themeTargetList = items
-
-        val adapter = object : android.widget.ArrayAdapter<ThemeTargetItem>(
-            this,
-            R.layout.item_spinner_target,
-            items
-        ) {
-            override fun getView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
-                val tv = (convertView ?: layoutInflater.inflate(R.layout.item_spinner_target, parent, false)) as TextView
-                val item = getItem(position)
-                tv.text = getString(R.string.spinner_arrow, item?.title)
-                return tv
-            }
-
-            override fun getDropDownView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
-                val tv = (convertView ?: layoutInflater.inflate(R.layout.item_spinner_dropdown, parent, false)) as TextView
-                val item = getItem(position)
-                tv.text = item?.title
-                val isCurrent = item?.address == currentThemeTargetAddress
-                tv.setTextColor(ContextCompat.getColor(this@MainActivity, if (isCurrent) R.color.primary else R.color.text_primary))
-                return tv
-            }
-        }
-        spinner.adapter = adapter
-
-        // 恢复之前选中的位置或默认
-        val targetIndex = items.indexOfFirst { it.address == currentThemeTargetAddress }.let {
-            if (it >= 0) it else 0
-        }
-        isProgrammaticSpinnerChange = true
-        spinner.setSelection(targetIndex, false)
-        isProgrammaticSpinnerChange = false
-        currentThemeTargetAddress = items[targetIndex].address
-
-        spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (isProgrammaticSpinnerChange) return
-                val item = items.getOrNull(position) ?: return
-                currentThemeTargetAddress = item.address
-                loadThemeTargetUI(item.address)
-            }
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
-        }
-    }
-
-    private fun selectTargetInDropdown(address: String?) {
-        val spinner = binding.tabThemesLayout.spinnerThemeTarget
-        val index = themeTargetList.indexOfFirst { it.address == address }
-        if (index >= 0) {
-            isProgrammaticSpinnerChange = true
-            spinner.setSelection(index, false)
-            isProgrammaticSpinnerChange = false
-            currentThemeTargetAddress = address
-            loadThemeTargetUI(address)
-        }
-    }
-
     private fun loadThemeTargetUI(targetAddress: String?) {
         val config = if (targetAddress == null) {
             viewModel.popupConfig.value ?: return
@@ -473,11 +526,18 @@ class MainActivity : AppCompatActivity() {
             viewModel.getDevicePopupConfig(targetAddress)
         }
 
-        val themes = binding.tabThemesLayout
+        val themes = detail
         val currentName = if (config.customDeviceName.isNotBlank()) config.customDeviceName else getString(R.string.name_empty_placeholder)
         themes.tvCurrentTargetDeviceName.text = currentName
 
-        updateThemeCardsUI(config.animationTheme, config.customMediaType, config.customMediaPath)
+        // Appareil personnalisable mais popup désactivé : on le dit clairement
+        val targetEnabled = targetAddress?.let { address ->
+            bondedDeviceItems.firstOrNull { it.address == address }?.isSelected
+        } ?: true
+        themes.tvTargetDisabledHint.visibility = if (targetEnabled) View.GONE else View.VISIBLE
+
+        updateCurrentMediaUI(config.animationTheme, config.customMediaType, config.customMediaPath)
+        updateCustomMediaThumbnail(config.customMediaPath, config.customMediaType)
 
         if (config.videoDismissMode == "on_complete") {
             themes.rbVideoOnComplete.isChecked = true
@@ -592,6 +652,7 @@ class MainActivity : AppCompatActivity() {
         settings.btnOpenOemSettings.setOnClickListener {
             PermissionHelper.openAppDetailsOrOemSettings(this)
         }
+
     }
 
     /**
@@ -607,7 +668,7 @@ class MainActivity : AppCompatActivity() {
 
         // 服务状态
         viewModel.isServiceRunning.observe(this) { running ->
-            val dash = binding.tabDashboardLayout
+            val dash = binding.tabSettingsLayout
             if (dash.switchService.isChecked != running) {
                 dash.switchService.isChecked = running
             }
@@ -626,25 +687,32 @@ class MainActivity : AppCompatActivity() {
 
         // 已配对设备列表展示与动效工坊下拉框联动
         viewModel.bondedDevices.observe(this) { devices ->
+            bondedDeviceItems = devices
             renderBondedDevices(devices)
-            setupThemesDropdown(devices)
         }
 
         // 弹窗参数配置
         viewModel.popupConfig.observe(this) { config ->
-            val dash = binding.tabDashboardLayout
+            binding.tabDevicesLayout.tvGlobalThemeSummary.text =
+                getString(R.string.devices_global_summary, themeLabel(config.animationTheme))
+            applyTargetThumb(
+                binding.tabDevicesLayout.ivGlobalThemeThumb,
+                config.animationTheme,
+                config.customMediaType,
+                config.customMediaPath
+            )
 
-            // 扬声器外放
-            if (dash.switchForceSpeakerphone.isChecked != config.isForceSpeakerphone) {
-                dash.switchForceSpeakerphone.isChecked = config.isForceSpeakerphone
+            if (!this::detail.isInitialized) return@observe
+
+            val drawer = detail
+            if (drawer.switchForceSpeakerphone.isChecked != config.isForceSpeakerphone) {
+                drawer.switchForceSpeakerphone.isChecked = config.isForceSpeakerphone
             }
 
-            // 倒计时滑块
-            dash.sliderDismissDelay.value = config.autoDismissSeconds.toFloat()
-            dash.tvDismissDelayLabel.text = getString(R.string.setting_dismiss_delay, config.autoDismissSeconds)
+            drawer.sliderDismissDelay.value = config.autoDismissSeconds.toFloat()
+            drawer.tvDismissDelayLabel.text = getString(R.string.setting_dismiss_delay, config.autoDismissSeconds)
 
-            // 仅在当前选择全局默认时同步动效工坊卡片
-            if (currentThemeTargetAddress == null) {
+            if (currentThemeTargetAddress == null && detailSheet?.isShowing == true) {
                 loadThemeTargetUI(null)
             }
         }
@@ -680,10 +748,13 @@ class MainActivity : AppCompatActivity() {
         if (!bluetooth) missingList.add(getString(R.string.perm_missing_bluetooth))
         if (!notification) missingList.add(getString(R.string.perm_missing_notification))
 
-        val dash = binding.tabDashboardLayout
+        val dash = binding.tabDevicesLayout
         if (missingList.isNotEmpty()) {
             dash.cardPermissionWarning.visibility = View.VISIBLE
-            dash.tvMissingPermSummary.text = getString(R.string.dash_missing_perm_summary, missingList.joinToString("、"))
+            dash.tvMissingPermSummary.text = getString(
+                R.string.dash_missing_perm_summary,
+                missingList.joinToString(getString(R.string.list_separator))
+            )
         } else if (!isBtEnabled) {
             dash.cardPermissionWarning.visibility = View.VISIBLE
             dash.tvMissingPermSummary.text = getString(R.string.dash_bt_off_warning)
@@ -710,64 +781,45 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateThemeCardsUI(theme: String, mediaType: String, mediaPath: String?) {
-        val themes = binding.tabThemesLayout
-        val dash = binding.tabDashboardLayout
+    private fun updateCurrentMediaUI(theme: String, mediaType: String, mediaPath: String?) {
+        val themes = detail
 
-        val activeStrokeColor = ContextCompat.getColor(this, R.color.primary)
-        val defaultStrokeColor = ContextCompat.getColor(this, R.color.card_stroke)
-        val activeStrokeWidth = (2 * resources.displayMetrics.density).toInt()
-        val defaultStrokeWidth = (1 * resources.displayMetrics.density).toInt()
-
-        // 重置三张卡片边框与对勾
-        themes.cardThemeClassic.strokeColor = defaultStrokeColor
-        themes.cardThemeClassic.strokeWidth = defaultStrokeWidth
-        themes.ivCheckClassic.visibility = View.GONE
-
-        themes.cardThemeGreatVictory.strokeColor = defaultStrokeColor
-        themes.cardThemeGreatVictory.strokeWidth = defaultStrokeWidth
-        themes.ivCheckGreatVictory.visibility = View.GONE
-
-        themes.cardThemeCustom.strokeColor = defaultStrokeColor
-        themes.cardThemeCustom.strokeWidth = defaultStrokeWidth
-        themes.ivCheckCustom.visibility = View.GONE
-
-        if (theme == "great_victory") {
-            themes.cardThemeGreatVictory.strokeColor = activeStrokeColor
-            themes.cardThemeGreatVictory.strokeWidth = activeStrokeWidth
-            themes.ivCheckGreatVictory.visibility = View.VISIBLE
-            dash.tvQuickThemeName.text = getString(R.string.dash_theme_great_victory)
-        } else if (theme == "custom_media") {
-            themes.cardThemeCustom.strokeColor = activeStrokeColor
-            themes.cardThemeCustom.strokeWidth = activeStrokeWidth
-            themes.ivCheckCustom.visibility = View.VISIBLE
-            val typeDesc = when (mediaType) {
-                "video" -> getString(R.string.media_type_video_mp4)
-                "image" -> getString(R.string.media_type_image_gif)
-                "lottie" -> getString(R.string.media_type_lottie)
-                else -> getString(R.string.media_type_other)
-            }
-            val fileName = mediaPath?.let { java.io.File(it).name } ?: ""
-            themes.tvCustomMediaDetail.text = if (fileName.isNotEmpty()) getString(R.string.media_active_hint, typeDesc, fileName) else getString(R.string.media_active_hint_no_file, typeDesc)
-            dash.tvQuickThemeName.text = getString(R.string.dash_theme_custom)
-        } else {
-            themes.cardThemeClassic.strokeColor = activeStrokeColor
-            themes.cardThemeClassic.strokeWidth = activeStrokeWidth
-            themes.ivCheckClassic.visibility = View.VISIBLE
-            dash.tvQuickThemeName.text = getString(R.string.dash_theme_classic)
+        val hasCustomMedia = theme == "custom_media" && !mediaPath.isNullOrBlank()
+        val typeDesc = when (mediaType) {
+            "video" -> getString(R.string.media_type_video_mp4)
+            "image" -> getString(R.string.media_type_image_gif)
+            "lottie" -> getString(R.string.media_type_lottie)
+            else -> getString(R.string.media_type_other)
         }
+        val fileName = mediaPath?.let { java.io.File(it).name }.orEmpty()
+
+        themes.tvCurrentMediaDetail.text = when {
+            hasCustomMedia && fileName.isNotBlank() ->
+                getString(R.string.media_active_hint, typeDesc, fileName)
+            hasCustomMedia ->
+                getString(R.string.media_active_hint_no_file, typeDesc)
+            theme == "great_victory" ->
+                getString(R.string.media_legacy_preset, getString(R.string.dash_theme_great_victory))
+            else -> getString(R.string.media_default_active)
+        }
+
+        val pathIsVideo = mediaPath?.let {
+            it.endsWith(".mp4", ignoreCase = true) || it.endsWith(".webm", ignoreCase = true)
+        } == true
+        val isVideoTheme = theme == "great_victory" ||
+            (theme == "custom_media" && (mediaType == "video" || pathIsVideo))
+        themes.cardVideoOptions.visibility = if (isVideoTheme) View.VISIBLE else View.GONE
     }
 
     private fun renderBondedDevices(devices: List<BondedDeviceItem>) {
         val container = binding.tabDevicesLayout.layoutBondedDevicesContainer
-        val dash = binding.tabDashboardLayout
         container.removeAllViews()
 
         val selectedCount = devices.count { it.isSelected }
-        if (selectedCount > 0) {
-            dash.tvQuickDeviceFilter.text = getString(R.string.dash_devices_enabled, selectedCount)
+        binding.tabDevicesLayout.tvEnabledDevicesSummary.text = if (selectedCount > 0) {
+            getString(R.string.dash_devices_enabled, selectedCount)
         } else {
-            dash.tvQuickDeviceFilter.text = getString(R.string.dash_devices_none)
+            getString(R.string.dash_devices_none)
         }
 
         if (devices.isEmpty()) {
@@ -820,25 +872,16 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-            // 1. 左侧齿轮设置图标（点击直接跳转动效工坊定制该耳机效果）
-            val gearIv = ImageView(this).apply {
-                layoutParams = LinearLayout.LayoutParams((32 * density).toInt(), (32 * density).toInt())
-                setImageResource(R.drawable.ic_settings)
-                setColorFilter(if (isSelected) primaryColor else textSecondaryColor)
-                setPadding((4 * density).toInt(), (4 * density).toInt(), (4 * density).toInt(), (4 * density).toInt())
-                background = ContextCompat.getDrawable(this@MainActivity, android.R.drawable.list_selector_background)
-                isClickable = true
-                isFocusable = true
-                setOnClickListener {
-                    if (!device.isSelected) {
-                        Toast.makeText(this@MainActivity, getString(R.string.device_need_enable_toast), Toast.LENGTH_SHORT).show()
-                        return@setOnClickListener
-                    }
-                    binding.bottomNav.selectedItemId = R.id.nav_themes
-                    selectTargetInDropdown(device.address)
-                }
+            // 1. 左侧：该耳机已绑定的视觉（无则回退到耳机图标）
+            val thumb = ImageView(this).apply {
+                layoutParams = LinearLayout.LayoutParams((48 * density).toInt(), (48 * density).toInt())
+                scaleType = ImageView.ScaleType.CENTER_CROP
+                setBackgroundResource(R.drawable.bg_media_thumb)
+                clipToOutline = true
+                contentDescription = null
             }
-            row.addView(gearIv)
+            applyTargetThumb(thumb, device.animationTheme, device.customMediaType, device.customMediaPath)
+            row.addView(thumb)
 
             // 2. 中间耳机信息
             val infoLayout = LinearLayout(this).apply {
@@ -879,13 +922,166 @@ class MainActivity : AppCompatActivity() {
             }
             row.addView(switchBtn)
 
+            val chevron = ImageView(this).apply {
+                layoutParams = LinearLayout.LayoutParams((20 * density).toInt(), (20 * density).toInt()).apply {
+                    marginStart = (8 * density).toInt()
+                }
+                setImageResource(R.drawable.ic_chevron_right)
+                setColorFilter(textSecondaryColor)
+            }
+            row.addView(chevron)
+
+            card.setOnClickListener { openDetail(device.address) }
+
             card.addView(row)
             container.addView(card)
         }
     }
-}
 
-data class ThemeTargetItem(
-    val title: String,
-    val address: String?
-)
+    /** Affiche la vignette du visuel lié à une cible (vidéo, GIF, image), ou une icône */
+    private fun applyTargetThumb(iv: ImageView, theme: String, mediaType: String?, mediaPath: String?) {
+        when {
+            theme == "great_victory" -> loadRawVideoThumb(iv, R.raw.video_great_victory)
+            theme == "custom_media" && !mediaPath.isNullOrBlank() && mediaType == "lottie" ->
+                showThumbIcon(iv, R.drawable.ic_nav_palette)
+            theme == "custom_media" && !mediaPath.isNullOrBlank() -> {
+                showThumbIcon(iv, R.drawable.ic_bluetooth_headset)
+                val isVideo = mediaType == "video"
+                val targetPx = (48 * resources.displayMetrics.density).toInt()
+                lifecycleScope.launch {
+                    val bitmap = withContext(Dispatchers.IO) {
+                        MediaThumbnailLoader.load(mediaPath, isVideo, targetPx)
+                    }
+                    if (bitmap != null) {
+                        iv.imageTintList = null
+                        iv.setPadding(0, 0, 0, 0)
+                        iv.setImageBitmap(bitmap)
+                    }
+                }
+            }
+            else -> showThumbIcon(iv, R.drawable.ic_bluetooth_headset)
+        }
+    }
+
+    private fun showThumbIcon(iv: ImageView, res: Int) {
+        val density = resources.displayMetrics.density
+        val pad = (12 * density).toInt()
+        iv.setPadding(pad, pad, pad, pad)
+        iv.scaleType = ImageView.ScaleType.FIT_CENTER
+        iv.imageTintList = android.content.res.ColorStateList.valueOf(
+            ContextCompat.getColor(this, R.color.accent)
+        )
+        iv.setImageResource(res)
+    }
+
+    private val rawThumbCache = HashMap<Int, Bitmap>()
+
+    private fun loadRawVideoThumb(iv: ImageView, rawRes: Int) {
+        rawThumbCache[rawRes]?.let { cached ->
+            iv.imageTintList = null
+            iv.setPadding(0, 0, 0, 0)
+            iv.scaleType = ImageView.ScaleType.CENTER_CROP
+            iv.setImageBitmap(cached)
+            return
+        }
+        showThumbIcon(iv, R.drawable.ic_sparkles)
+        lifecycleScope.launch {
+            val bitmap = withContext(Dispatchers.IO) { extractRawFrame(rawRes) }
+            if (bitmap != null) {
+                rawThumbCache[rawRes] = bitmap
+                iv.imageTintList = null
+                iv.setPadding(0, 0, 0, 0)
+                iv.scaleType = ImageView.ScaleType.CENTER_CROP
+                iv.setImageBitmap(bitmap)
+            }
+        }
+    }
+
+    private fun extractRawFrame(rawRes: Int): Bitmap? {
+        return try {
+            resources.openRawResourceFd(rawRes)?.use { fd ->
+                val retriever = MediaMetadataRetriever()
+                retriever.setDataSource(fd.fileDescriptor, fd.startOffset, fd.declaredLength)
+                val frame = retriever.getFrameAtTime(500_000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                    ?: retriever.frameAtTime
+                retriever.release()
+                frame
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun themeLabel(theme: String): String = when (theme) {
+        "great_victory" -> getString(R.string.dash_theme_great_victory)
+        "custom_media" -> getString(R.string.dash_theme_custom)
+        else -> getString(R.string.dash_theme_classic)
+    }
+
+    /** 预览当前目标的完整配置（不修改任何偏好） */
+    private fun previewCurrentTarget() {
+        if (!PermissionHelper.hasOverlayPermission(this)) {
+            Toast.makeText(this, getString(R.string.overlay_needed_toast), Toast.LENGTH_SHORT).show()
+            binding.bottomNav.selectedItemId = R.id.nav_settings
+            PermissionHelper.requestOverlayPermission(this)
+            return
+        }
+        val config = currentTargetConfig() ?: return
+        viewModel.previewPopup(applicationContext, config, previewDeviceState())
+    }
+
+    private fun currentTargetConfig(): PopupConfig? =
+        currentThemeTargetAddress?.let { viewModel.getDevicePopupConfig(it) } ?: viewModel.popupConfig.value
+
+    /** 预览时展示当前目标耳机的真实名称，没有选中设备时退回通用文案 */
+    private fun previewDeviceState(): DeviceBatteryState {
+        val address = currentThemeTargetAddress ?: return DeviceBatteryState.mock()
+        val deviceName = bondedDeviceItems.firstOrNull { it.address == address }?.name ?: ""
+        return DeviceBatteryState(
+            deviceName = deviceName,
+            deviceAddress = address,
+            isConnected = true,
+            batteryLevel = 85,
+            isCharging = false
+        )
+    }
+
+    /** Charge la vignette du média actif, avec une icône de repli si nécessaire. */
+    private fun updateCustomMediaThumbnail(path: String?, type: String) {
+        val themes = detail
+        val lastModified = path?.let { java.io.File(it).lastModified() } ?: 0L
+        val key = "$path|$type|$lastModified"
+        if (key == customThumbKey) return
+        customThumbKey = key
+
+        if (path.isNullOrBlank() || type == "lottie") {
+            showCustomMediaIcon()
+            return
+        }
+
+        val targetPx = (48 * resources.displayMetrics.density).toInt()
+        val isVideo = type == "video" || path.endsWith(".mp4", true) || path.endsWith(".webm", true)
+
+        lifecycleScope.launch {
+            val bitmap = withContext(Dispatchers.IO) {
+                MediaThumbnailLoader.load(path, isVideo, targetPx)
+            }
+            if (customThumbKey != key) return@launch
+            if (bitmap != null) {
+                themes.ivCurrentMediaThumb.setImageBitmap(bitmap)
+                themes.ivCurrentMediaThumb.visibility = View.VISIBLE
+                themes.ivCurrentMediaIcon.visibility = View.GONE
+            } else {
+                showCustomMediaIcon()
+            }
+        }
+    }
+
+    private fun showCustomMediaIcon() {
+        val themes = detail
+        themes.ivCurrentMediaThumb.setImageDrawable(null)
+        themes.ivCurrentMediaThumb.visibility = View.GONE
+        themes.ivCurrentMediaIcon.visibility = View.VISIBLE
+    }
+
+}

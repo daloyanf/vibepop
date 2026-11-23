@@ -1,0 +1,200 @@
+<resources>
+    <string name="app_name">VibePop</string>
+    <string name="service_notification_title">Earbud popup service running</string>
+    <string name="service_notification_desc">Monitoring the connection state of your selected earbuds</string>
+
+    <!-- Base UI -->
+    <string name="btn_test_popup">Preview a popup</string>
+    <string name="btn_confirm">OK</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_go_settings">Go to settings</string>
+
+    <!-- Permissions -->
+    <string name="perm_overlay_title">Display over other apps (required)</string>
+    <string name="perm_overlay_desc">Lets the earbud animation card appear over the home screen or any app</string>
+    <string name="perm_bluetooth_title">Bluetooth access</string>
+    <string name="perm_bluetooth_desc">Used to detect earbud connections and read the real battery level</string>
+    <string name="perm_notification_title">Notifications</string>
+    <string name="perm_notification_desc">Keeps the foreground service alive so the monitor is not killed in the background</string>
+    <string name="btn_grant">Allow</string>
+    <string name="btn_granted">Enabled</string>
+    <string name="perm_missing_overlay">overlay</string>
+    <string name="perm_missing_bluetooth">Bluetooth</string>
+    <string name="perm_missing_notification">notifications</string>
+
+    <!-- Popup settings -->
+    <string name="setting_dismiss_delay">Popup duration: %1$d s</string>
+
+    <!-- Popup content -->
+    <string name="default_device_name">Custom name</string>
+    <string name="status_connected_text">Connected</string>
+    <string name="battery_unknown">--%</string>
+    <string name="device_name_fallback">Bluetooth earbuds</string>
+    <string name="device_name_unknown">Unknown device</string>
+    <string name="name_empty_placeholder">Empty</string>
+
+    <!-- Dashboard -->
+    <string name="dash_service_running">Service running</string>
+    <string name="dash_service_stopped">Service paused</string>
+    <string name="dash_service_sub_running">A popup appears at the bottom of the screen when a selected earbud connects</string>
+    <string name="dash_service_sub_stopped">Turn on the switch to monitor earbud connections</string>
+    <string name="dash_devices_enabled">Enabled (%1$d)</string>
+    <string name="dash_devices_none">Off (no device responds)</string>
+    <string name="dash_missing_perm_summary">Missing permission: %1$s. Tap to set it up</string>
+    <string name="dash_bt_off_warning">⚠️ Bluetooth is off — tap to turn it on</string>
+    <string name="dash_theme_classic">AirPods Pro</string>
+    <string name="dash_theme_great_victory">Open-ear earbuds</string>
+    <string name="dash_theme_custom">Custom media</string>
+
+    <!-- Media types -->
+    <string name="media_type_video_mp4">Video (MP4)</string>
+    <string name="media_type_image_gif">Image / GIF</string>
+    <string name="media_type_lottie">Lottie vector</string>
+    <string name="media_type_other">Gallery media</string>
+    <string name="media_type_video_full">Video (MP4, with sound)</string>
+    <string name="media_type_image_full">Image / animated GIF</string>
+    <string name="media_active_hint">Active: %1$s (%2$s)</string>
+    <string name="media_active_hint_no_file">Active: %1$s</string>
+
+    <!-- Bluetooth status -->
+    <string name="bt_off_toast">⚠️ Bluetooth is off — earbud popups are disabled</string>
+    <string name="bt_on_toast">✅ Bluetooth is on</string>
+    <string name="bt_off_prompt_toast">⚠️ Bluetooth is off — turn it on first</string>
+    <string name="bt_refreshed_toast">Paired devices refreshed</string>
+    <string name="bt_granted_on_toast">Bluetooth is allowed and on</string>
+    <string name="bt_enable_button">Turn on Bluetooth</string>
+    <string name="bt_not_enabled_title">📡 Bluetooth is off</string>
+    <string name="bt_not_enabled_message">Bluetooth is currently off. Turn it on so VibePop can show your popup when the earbuds connect.</string>
+    <string name="bt_later">Later</string>
+
+    <!-- Popup target policy notice -->
+    <string name="target_policy_notice_title">🔔 Popup behaviour updated</string>
+    <string name="target_policy_notice_message">To make popups more precise, VibePop no longer responds to any earbud by default. Open Devices to pick the earbuds that should trigger a popup — each one can have its own animation.</string>
+    <string name="target_policy_notice_go">Open devices</string>
+    <string name="target_policy_notice_later">Got it</string>
+
+    <!-- Media import -->
+    <string name="import_success_global">🎉 Global %1$s imported!</string>
+    <string name="import_success_device">🎉 Media imported for this earbud!</string>
+    <string name="import_failed">Import failed — check the file format</string>
+    <string name="media_perm_granted_toast">Media access granted — tap import again</string>
+    <string name="media_perm_needed_toast">Media access is required to import your own animation</string>
+    <string name="overlay_needed_toast">Grant the overlay permission first to show popups</string>
+
+    <!-- Rename -->
+    <string name="rename_dialog_title">✏️ Rename the popup</string>
+    <string name="rename_dialog_hint">Popup name (leave empty to use the Bluetooth name)</string>
+    <string name="rename_dialog_message">Name shown in the popup for “%1$s”:</string>
+    <string name="rename_global_default">Global default</string>
+    <string name="rename_target_fallback">Selected earbud</string>
+    <string name="rename_updated_toast">Popup name updated to: %1$s</string>
+    <string name="rename_cleared_toast">Custom name cleared (the Bluetooth name will be used)</string>
+
+    <!-- Devices -->
+    <string name="device_empty_hint">No paired Bluetooth device found. Pair your earbuds in the system Bluetooth settings and they will show up here for customisation.</string>
+    <string name="device_enabled_status">✅ Popup enabled</string>
+    <string name="device_disabled_status">⏸️ Off (no popup) • MAC: %1$s</string>
+    <string name="device_need_enable_toast">Turn on the switch on the right before choosing an animation</string>
+    <string name="device_clear_all">Disable all</string>
+    <string name="device_clear_all_toast">Popups disabled for all earbuds</string>
+    <string name="device_none_enabled_toast">No earbud is enabled right now</string>
+
+    <!-- Theme target switcher -->
+    <string name="theme_target_global">🌐 Global default</string>
+    <string name="theme_target_global_plain">Global settings</string>
+    <string name="devices_paired_title">Paired earbuds</string>
+    <string name="devices_global_summary">Animation: %1$s</string>
+    <string name="btn_back">Back</string>
+    <string name="theme_target_device">🎧 %1$s</string>
+    <string name="theme_target_disabled_hint">Popups are off for this earbud. Enable it in the Devices tab.</string>
+    <string name="spinner_arrow">%1$s  ▼</string>
+
+    <!-- List separator -->
+    <string name="list_separator">", "</string>
+
+    <!-- Notification channel -->
+    <string name="notification_channel_name">Earbud connection monitor</string>
+    <string name="notification_channel_desc">Keeps the VibePop monitor service running in the background</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_themes">Studio</string>
+    <string name="nav_devices">Devices</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Dashboard screen -->
+    <string name="app_tagline">Custom lifelike popups for Bluetooth earbuds</string>
+    <string name="cd_app_logo">App icon</string>
+    <string name="dash_status_ready">Service ready</string>
+    <string name="dash_config_hint_title">System setup needed</string>
+    <string name="dash_click_to_configure">Tap to configure now</string>
+    <string name="dash_fix_now">Fix now ›</string>
+    <string name="dash_service_title">Earbud connection monitor</string>
+    <string name="dash_service_sub">When enabled, a popup slides up from the bottom as soon as a selected earbud connects</string>
+    <string name="dash_preview_title">Popup preview &amp; controls</string>
+    <string name="dash_preview_sub">Set audio routing and display duration, then preview the dark lifelike popup in one tap</string>
+    <string name="dash_force_speaker_title">Force phone loudspeaker</string>
+    <string name="dash_force_speaker_desc">Play the animation sound through the phone speaker even with earbuds connected</string>
+    <string name="dash_test_popup">✨ Test the popup</string>
+    <string name="dash_snapshot_title">Current setup</string>
+    <string name="dash_snapshot_theme">Active theme</string>
+    <string name="dash_snapshot_target">Responding to</string>
+
+    <!-- Animation studio -->
+    <string name="themes_title">🎨 Animation studio</string>
+    <string name="themes_subtitle">Give each earbud its own animation</string>
+    <string name="themes_target_label">Customising</string>
+    <string name="themes_section_hint">Media played when the earbud connects</string>
+    <string name="cd_preview_theme">Preview this animation</string>
+    <string name="preview_need_media">Import a media file first</string>
+    <string name="btn_close_drawer">Close panel</string>
+    <string name="media_current_title">Current media</string>
+    <string name="media_default_active">Default animation · Tap to choose your media</string>
+    <string name="media_legacy_preset">Built-in visual active: %1$s</string>
+    <string name="media_change_action">Change</string>
+
+    <!-- Included visuals -->
+    <string name="media_library_title">Included visuals</string>
+    <string name="media_library_hint">Tap a visual to use it for this target</string>
+    <string name="media_builtin_open_ear">Open-ear video</string>
+    <string name="themes_popup_name">Popup name</string>
+    <string name="themes_rename">✏️ Rename</string>
+    <string name="themes_section_title">Animation theme</string>
+    <string name="theme_classic_title">Classic AirPods Pro</string>
+    <string name="theme_classic_desc">Lifelike lid opening, earbuds leaving the case and a battery badge in the corner</string>
+    <string name="theme_victory_title">Open-ear earbuds</string>
+    <string name="theme_victory_desc">Looping animation on a dark background, silent</string>
+    <string name="theme_custom_title">Your own media</string>
+    <string name="theme_custom_desc">Use the button below to import an MP4 video or a high-res wallpaper</string>
+    <string name="theme_import_section_desc">Supports MP4 video (with sound), animated GIF, WebP, PNG and JPG</string>
+    <string name="btn_pick_media">🎬 Pick from the gallery</string>
+    <string name="theme_video_rules_title">🎬 Video playback &amp; dismiss rules</string>
+    <string name="video_dismiss_on_complete">Play once, then close</string>
+    <string name="video_dismiss_timer">Loop until the timer ends</string>
+    <string name="video_loop_hint">The countdown uses the duration set in Global settings.</string>
+
+    <!-- Devices screen -->
+    <string name="devices_title">🎧 Devices</string>
+    <string name="devices_subtitle">Manage paired earbuds, enable popups and give each one its own animation</string>
+    <string name="devices_targets_title">Earbuds that trigger a popup</string>
+    <string name="devices_targets_desc">Nothing triggers by default — only the earbuds you enable. Each of them can have its own content.</string>
+    <string name="btn_refresh">Refresh</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">⚙️ Settings &amp; permissions</string>
+    <string name="settings_subtitle">Monitor service and system permissions</string>
+    <string name="settings_perms_title">🛡️ Required permissions</string>
+    <string name="settings_perms_desc">Enable these permissions so the popup can appear on the lock screen, the home screen or in any app</string>
+    <string name="perm_media_title">Photos &amp; media access</string>
+    <string name="perm_media_desc">Used to import local MP4 videos and images</string>
+    <string name="perm_oem_title">Lock-screen &amp; background popups</string>
+    <string name="perm_oem_desc">Required on Xiaomi/OPPO/vivo builds to show popups on the lock screen and in the background</string>
+    <string name="settings_bg_title">💡 Keeping the service alive</string>
+    <string name="settings_bg_body">On Chinese Android builds (Xiaomi HyperOS, Huawei HarmonyOS, OPPO ColorOS, vivo OriginOS), set VibePop to “No restrictions” under Battery and lock it in the recent-apps screen so the system does not kill the monitoring service.</string>
+
+    <!-- Popup accessibility -->
+    <string name="popup_desc_background">Custom background image</string>
+    <string name="popup_desc_drag">Drag to dismiss</string>
+    <string name="popup_desc_battery">Battery level</string>
+    <string name="popup_desc_charging">Charging</string>
+</resources>

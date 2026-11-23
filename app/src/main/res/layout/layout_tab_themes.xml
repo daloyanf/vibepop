@@ -4,44 +4,77 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tabThemes"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:visibility="gone">
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:fillViewport="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="24dp">
 
-        <!-- 页面标题与目标切换下拉框 (单行齐平) -->
+        <!-- Poignée du drawer -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_drag_handle" />
+
+        <!-- Fermer + cible actuelle -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/btnBackToDevices"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/btn_close_drawer"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_close"
+                app:tint="@color/text_primary" />
+
             <TextView
+                android:id="@+id/tvDetailTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="🎨 动效工坊"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textColor="@color/text_primary"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
-            <Spinner
-                android:id="@+id/spinnerThemeTarget"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:background="@drawable/bg_battery_badge"
-                android:gravity="center_vertical|end"
-                android:popupBackground="@color/bg_card_dark"
-                android:dropDownVerticalOffset="38dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:spinnerMode="dropdown" />
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:text="AirPods de Clem" />
         </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/themes_section_hint"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/tvTargetDisabledHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/theme_target_disabled_hint"
+            android:textColor="@color/status_warning"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <!-- 弹窗显示名称与重命名卡片 -->
         <com.google.android.material.card.MaterialCardView
@@ -74,7 +107,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="弹窗显示名称"
+                        android:text="@string/themes_popup_name"
                         android:textColor="@color/text_secondary"
                         android:textSize="11sp" />
 
@@ -83,7 +116,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="空"
+                        android:text="@string/name_empty_placeholder"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -94,95 +127,26 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="✏️ 重命名"
+                    android:text="@string/themes_rename"
                     android:textColor="@color/primary"
                     android:textSize="13sp"
                     app:cornerRadius="10dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 动效主题标题 -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:text="动效主题"
-            android:textColor="@color/text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <!-- 卡片 1: 经典 AirPods -->
+        <!-- Média actuellement attribué -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardThemeClassic"
+            android:id="@+id/cardCurrentMedia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:clickable="true"
             android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
             app:cardBackgroundColor="@color/bg_card_dark"
             app:cardCornerRadius="16dp"
             app:cardElevation="2dp"
-            app:strokeColor="@color/primary"
-            app:strokeWidth="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_bluetooth_headset"
-                    app:tint="@color/primary" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="经典 AirPods Pro"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="拟真开盖、耳机出仓动效与右上角电量指示"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/ivCheckClassic"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_check_circle"
-                    android:visibility="visible" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- 卡片 2: 伟大胜利 (内置高清全景视频特效) -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardThemeGreatVictory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="@color/bg_card_dark"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/card_stroke"
+            app:strokeColor="@color/card_stroke_active"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -192,11 +156,29 @@
                 android:orientation="horizontal"
                 android:padding="16dp">
 
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_sparkles"
-                    app:tint="@color/status_warning" />
+                <FrameLayout
+                    android:layout_width="48dp"
+                    android:layout_height="48dp">
+
+                    <ImageView
+                        android:id="@+id/ivCurrentMediaThumb"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_media_thumb"
+                        android:clipToOutline="true"
+                        android:contentDescription="@string/popup_desc_background"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        tools:src="@drawable/ic_nav_palette" />
+
+                    <ImageView
+                        android:id="@+id/ivCurrentMediaIcon"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_nav_palette"
+                        app:tint="@color/accent" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -208,100 +190,49 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="伟大胜利"
+                        android:text="@string/media_current_title"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvCurrentMediaDetail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="全景高光胜利动效（自带震撼原声音效）"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="@string/media_default_active"
                         android:textColor="@color/text_secondary"
                         android:textSize="11sp" />
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/ivCheckGreatVictory"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_check_circle"
-                    android:visibility="gone" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- 卡片 3: 本地多媒体导入 -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardThemeCustom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="@color/bg_card_dark"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:strokeColor="@color/card_stroke"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
-                <ImageView
-                    android:layout_width="36dp"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnChooseCurrentMedia"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:src="@drawable/ic_nav_palette"
-                    app:tint="@color/accent" />
+                    android:text="@string/media_change_action"
+                    android:textColor="@color/primary"
+                    android:textSize="13sp"
+                    app:cornerRadius="10dp" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="本地多媒体导入"
-                        android:textColor="@color/text_primary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvCustomMediaDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="点击下方按钮导入 MP4 视频或高清壁纸"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/ivCheckCustom"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_check_circle"
-                    android:visibility="gone" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 相册多媒体导入操作区 -->
+        <!-- 全局弹窗选项（仅「全局默认」显示） -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardGlobalPopupOptions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="14dp"
+            android:visibility="gone"
             app:cardBackgroundColor="@color/bg_card_dark"
             app:cardCornerRadius="18dp"
-            app:cardElevation="3dp"
+            app:cardElevation="2dp"
             app:strokeColor="@color/card_stroke"
-            app:strokeWidth="1dp">
+            app:strokeWidth="1dp"
+            tools:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -312,7 +243,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="本地多媒体导入"
+                    android:text="@string/dash_preview_title"
                     android:textColor="@color/text_primary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -320,29 +251,98 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="支持 MP4 视频（可带原声音效）、GIF 动图、WebP、PNG、JPG"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/dash_preview_sub"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textSize="11sp" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnPickFromGallery"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:text="🎬 从相册选择视频 / 图片 / 动图"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    app:backgroundTint="@color/primary"
-                    app:cornerRadius="14dp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <!-- 视频消退规则 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dash_force_speaker_title"
+                            android:textColor="@color/text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/dash_force_speaker_desc"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchForceSpeakerphone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/card_stroke" />
+
+                <TextView
+                    android:id="@+id/tvDismissDelayLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="Durée du popup : 4 s" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderDismissDelay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stepSize="1"
+                    android:value="4"
+                    android:valueFrom="2"
+                    android:valueTo="15" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Options de lecture visibles pour un média vidéo -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardVideoOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/bg_card_dark"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="🎬 视频播放与关闭规则"
+                    android:text="@string/theme_video_rules_title"
                     android:textColor="@color/text_primary"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -351,14 +351,14 @@
                     android:id="@+id/rgVideoDismissMode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp">
+                    android:layout_marginTop="4dp">
 
                     <RadioButton
                         android:id="@+id/rbVideoOnComplete"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:text="单次播放完毕后自动关闭（推荐）"
+                        android:text="@string/video_dismiss_on_complete"
                         android:textColor="@color/text_primary"
                         android:textSize="13sp" />
 
@@ -366,13 +366,88 @@
                         android:id="@+id/rbVideoTimer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="固定倒计时关闭（循环播放直至计时结束）"
+                        android:text="@string/video_dismiss_timer"
                         android:textColor="@color/text_primary"
                         android:textSize="13sp" />
                 </RadioGroup>
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/video_loop_hint"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- Visuels intégrés -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardMediaLibrary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            app:cardBackgroundColor="@color/bg_card_dark"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="3dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/media_library_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/media_library_hint"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:clipToPadding="false"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/layoutMediaLibrary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" />
+                </HorizontalScrollView>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 预览按钮 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestPopup"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:text="@string/dash_test_popup"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/primary"
+            app:cornerRadius="14dp"
+            app:icon="@drawable/ic_bluetooth_headset"
+            app:iconGravity="textStart"
+            app:iconTint="#FFFFFF" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
