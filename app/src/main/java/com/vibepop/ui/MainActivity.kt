@@ -683,7 +683,10 @@ class MainActivity : AppCompatActivity() {
         val dash = binding.tabDashboardLayout
         if (missingList.isNotEmpty()) {
             dash.cardPermissionWarning.visibility = View.VISIBLE
-            dash.tvMissingPermSummary.text = getString(R.string.dash_missing_perm_summary, missingList.joinToString("、"))
+            dash.tvMissingPermSummary.text = getString(
+                R.string.dash_missing_perm_summary,
+                missingList.joinToString(getString(R.string.list_separator))
+            )
         } else if (!isBtEnabled) {
             dash.cardPermissionWarning.visibility = View.VISIBLE
             dash.tvMissingPermSummary.text = getString(R.string.dash_bt_off_warning)

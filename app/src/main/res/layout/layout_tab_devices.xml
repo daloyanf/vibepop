@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🎧 设备管理"
+            android:text="@string/devices_title"
             android:textColor="@color/text_primary"
             android:textSize="22sp"
             android:textStyle="bold" />
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="管理已配对的蓝牙耳机，开启弹窗响应并配置专属动效"
+            android:text="@string/devices_subtitle"
             android:textColor="@color/text_secondary"
             android:textSize="12sp" />
 
@@ -52,53 +52,53 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/devices_targets_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/devices_targets_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp" />
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:layout_marginTop="4dp"
+                        android:gravity="end"
+                        android:orientation="horizontal">
 
-                        <TextView
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnClearAllTargets"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="目标耳机响应列表"
-                            android:textColor="@color/text_primary"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/device_clear_all"
+                            android:textColor="@color/primary"
+                            android:textSize="13sp" />
 
-                        <TextView
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnRefreshDevices"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="默认全不响应，仅对已开启的耳机触发弹窗；可为每个耳机单独定制专属内容"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="11sp" />
+                            android:text="@string/btn_refresh"
+                            android:textColor="@color/primary"
+                            android:textSize="13sp"
+                            app:icon="@drawable/ic_refresh"
+                            app:iconSize="16dp"
+                            app:iconTint="@color/primary" />
                     </LinearLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnClearAllTargets"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/device_clear_all"
-                        android:textColor="@color/primary"
-                        android:textSize="13sp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnRefreshDevices"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="刷新列表"
-                        android:textColor="@color/primary"
-                        android:textSize="13sp"
-                        app:icon="@drawable/ic_refresh"
-                        app:iconSize="16dp"
-                        app:iconTint="@color/primary" />
                 </LinearLayout>
 
                 <!-- 已配对设备动态列表容器 -->
@@ -113,7 +113,7 @@
                         android:id="@+id/tvNoBondedDevices"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="未发现已配对的蓝牙设备。请先在系统蓝牙设置中连接配对，并在此处勾选启用。"
+                        android:text="@string/device_empty_hint"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>

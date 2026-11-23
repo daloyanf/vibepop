@@ -13,7 +13,6 @@ class VibePopApp : Application() {
 
     companion object {
         const val CHANNEL_ID_SERVICE = "vibepop_headset_monitor_channel"
-        const val CHANNEL_NAME_SERVICE = "耳机连接监听服务"
         lateinit var instance: VibePopApp
             private set
     }
@@ -39,10 +38,10 @@ class VibePopApp : Application() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID_SERVICE,
-                CHANNEL_NAME_SERVICE,
+                getString(R.string.notification_channel_name),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "保持 VibePop 后台耳机弹窗监听服务常驻"
+                description = getString(R.string.notification_channel_desc)
                 setShowBadge(false)
             }
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
