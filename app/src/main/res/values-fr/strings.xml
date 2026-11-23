@@ -1,0 +1,179 @@
+<resources>
+    <string name="app_name">VibePop</string>
+    <string name="service_notification_title">Service de popup écouteurs actif</string>
+    <string name="service_notification_desc">Surveillance de la connexion de vos écouteurs sélectionnés</string>
+
+    <!-- Textes d’interface de base -->
+    <string name="btn_test_popup">Aperçu du popup</string>
+    <string name="btn_confirm">OK</string>
+    <string name="btn_cancel">Annuler</string>
+    <string name="btn_go_settings">Ouvrir les réglages</string>
+
+    <!-- Permissions -->
+    <string name="perm_overlay_title">Affichage par-dessus les autres apps (requis)</string>
+    <string name="perm_overlay_desc">Autorise la carte animée des écouteurs à s’afficher sur l’accueil ou par-dessus toute app</string>
+    <string name="perm_bluetooth_title">Accès Bluetooth</string>
+    <string name="perm_bluetooth_desc">Sert à détecter la connexion des écouteurs et à lire le niveau de batterie réel</string>
+    <string name="perm_notification_title">Notifications</string>
+    <string name="perm_notification_desc">Maintient le service au premier plan pour qu’il ne soit pas tué en arrière-plan</string>
+    <string name="btn_grant">Autoriser</string>
+    <string name="btn_granted">Activé</string>
+    <string name="perm_missing_overlay">superposition</string>
+    <string name="perm_missing_bluetooth">Bluetooth</string>
+    <string name="perm_missing_notification">notifications</string>
+
+    <!-- Réglages du popup -->
+    <string name="setting_dismiss_delay">Durée du popup : %1$d s</string>
+
+    <!-- Contenu du popup -->
+    <string name="default_device_name">Nom personnalisé</string>
+    <string name="status_connected_text">Connecté</string>
+    <string name="battery_unknown">--%</string>
+    <string name="device_name_fallback">Écouteurs Bluetooth</string>
+    <string name="device_name_unknown">Appareil inconnu</string>
+    <string name="name_empty_placeholder">Vide</string>
+
+    <!-- Console -->
+    <string name="dash_service_running">Service actif</string>
+    <string name="dash_service_stopped">Service en pause</string>
+    <string name="dash_service_sub_running">Un popup apparaît en bas de l’écran dès qu’un écouteur coché se connecte</string>
+    <string name="dash_service_sub_stopped">Activez l’interrupteur pour surveiller les connexions des écouteurs</string>
+    <string name="dash_devices_enabled">Activés (%1$d)</string>
+    <string name="dash_devices_none">Aucun appareil</string>
+    <string name="dash_missing_perm_summary">Permission manquante : %1$s. Touchez pour configurer</string>
+    <string name="dash_bt_off_warning">⚠️ Le Bluetooth est désactivé — touchez pour l’activer</string>
+    <string name="dash_theme_classic">AirPods Pro</string>
+    <string name="dash_theme_great_victory">Grande Victoire</string>
+    <string name="dash_theme_custom">Média personnalisé</string>
+
+    <!-- Types de médias -->
+    <string name="media_type_video_mp4">Vidéo (MP4)</string>
+    <string name="media_type_image_gif">Image / GIF</string>
+    <string name="media_type_lottie">Vecteur Lottie</string>
+    <string name="media_type_other">Média de la galerie</string>
+    <string name="media_type_video_full">Vidéo (MP4, avec son)</string>
+    <string name="media_type_image_full">Image / GIF animé</string>
+    <string name="media_active_hint">Actif : %1$s (%2$s)</string>
+    <string name="media_active_hint_no_file">Actif : %1$s</string>
+
+    <!-- État Bluetooth -->
+    <string name="bt_off_toast">⚠️ Bluetooth désactivé — les popups sont inactifs</string>
+    <string name="bt_on_toast">✅ Bluetooth activé</string>
+    <string name="bt_off_prompt_toast">⚠️ Le Bluetooth est désactivé — activez-le d’abord</string>
+    <string name="bt_refreshed_toast">Liste des appareils appairés actualisée</string>
+    <string name="bt_granted_on_toast">Bluetooth autorisé et activé</string>
+    <string name="bt_enable_button">Activer le Bluetooth</string>
+    <string name="bt_not_enabled_title">📡 Le Bluetooth est désactivé</string>
+    <string name="bt_not_enabled_message">Le Bluetooth est actuellement désactivé. Activez-le pour que VibePop affiche votre popup à la connexion des écouteurs.</string>
+    <string name="bt_later">Plus tard</string>
+
+    <!-- Changement de stratégie de réponse -->
+    <string name="target_policy_notice_title">🔔 Comportement des popups mis à jour</string>
+    <string name="target_policy_notice_message">Pour plus de précision, VibePop ne réagit plus à aucun écouteur par défaut. Ouvrez Appareils pour choisir ceux qui déclenchent un popup — chacun peut avoir sa propre animation.</string>
+    <string name="target_policy_notice_go">Ouvrir Appareils</string>
+    <string name="target_policy_notice_later">Compris</string>
+
+    <!-- Import de médias -->
+    <string name="import_success_global">🎉 %1$s importé en global !</string>
+    <string name="import_success_device">🎉 Média importé pour cet écouteur !</string>
+    <string name="import_failed">Échec de l’import — vérifiez le format du fichier</string>
+    <string name="media_perm_granted_toast">Accès aux médias accordé — relancez l’import</string>
+    <string name="media_perm_needed_toast">L’accès aux médias est requis pour importer une animation</string>
+    <string name="overlay_needed_toast">Accordez d’abord la permission de superposition pour afficher le popup</string>
+
+    <!-- Renommage -->
+    <string name="rename_dialog_title">✏️ Renommer le popup</string>
+    <string name="rename_dialog_hint">Nom affiché (vide = nom Bluetooth d’origine)</string>
+    <string name="rename_dialog_message">Nom affiché dans le popup pour « %1$s » :</string>
+    <string name="rename_global_default">Global par défaut</string>
+    <string name="rename_target_fallback">Écouteur sélectionné</string>
+    <string name="rename_updated_toast">Nom du popup mis à jour : %1$s</string>
+    <string name="rename_cleared_toast">Nom personnalisé effacé (le nom Bluetooth sera utilisé)</string>
+
+    <!-- Appareils -->
+    <string name="device_empty_hint">Aucun appareil Bluetooth appairé. Appairez vos écouteurs dans les réglages Bluetooth du système, puis activez-les ici.</string>
+    <string name="device_enabled_status">✅ Popup activé</string>
+    <string name="device_disabled_status">⏸️ Désactivé (aucun popup) • MAC : %1$s</string>
+    <string name="device_need_enable_toast">Activez l’interrupteur à droite avant de choisir une animation</string>
+    <string name="device_clear_all">Tout désactiver</string>
+    <string name="device_clear_all_toast">Popups désactivés pour tous les écouteurs</string>
+    <string name="device_none_enabled_toast">Aucun écouteur n’est activé pour le moment</string>
+
+    <!-- Sélecteur de cible du thème -->
+    <string name="theme_target_global">🌐 Global</string>
+    <string name="theme_target_device">🎧 %1$s</string>
+    <string name="spinner_arrow">%1$s  ▼</string>
+
+    <!-- Séparateur de liste -->
+    <string name="list_separator">", "</string>
+
+    <!-- Canal de notification -->
+    <string name="notification_channel_name">Surveillance des écouteurs</string>
+    <string name="notification_channel_desc">Maintient le service de surveillance VibePop actif en arrière-plan</string>
+
+    <!-- Navigation basse -->
+    <string name="nav_dashboard">Console</string>
+    <string name="nav_themes">Atelier</string>
+    <string name="nav_devices">Appareils</string>
+    <string name="nav_settings">Réglages</string>
+
+    <!-- Écran Console -->
+    <string name="app_tagline">Des popups réalistes pour vos écouteurs Bluetooth</string>
+    <string name="cd_app_logo">Icône de l’application</string>
+    <string name="dash_status_ready">Service prêt</string>
+    <string name="dash_config_hint_title">Réglage système requis</string>
+    <string name="dash_click_to_configure">Touchez pour configurer</string>
+    <string name="dash_fix_now">Configurer ›</string>
+    <string name="dash_service_title">Surveillance des écouteurs</string>
+    <string name="dash_service_sub">Une fois activé, un popup glisse depuis le bas dès qu’un écouteur sélectionné se connecte</string>
+    <string name="dash_preview_title">Aperçu et réglages du popup</string>
+    <string name="dash_preview_sub">Réglez la sortie audio et la durée d’affichage, puis prévisualisez le popup sombre en un geste</string>
+    <string name="dash_force_speaker_title">Forcer le haut-parleur</string>
+    <string name="dash_force_speaker_desc">Jouer le son de l’animation sur le haut-parleur du téléphone même avec des écouteurs connectés</string>
+    <string name="dash_test_popup">✨ Tester le popup</string>
+    <string name="dash_snapshot_title">Configuration actuelle</string>
+    <string name="dash_snapshot_theme">Thème actif</string>
+    <string name="dash_snapshot_target">Appareils réactifs</string>
+
+    <!-- Écran Atelier -->
+    <string name="themes_title">🎨 Atelier</string>
+    <string name="themes_popup_name">Nom du popup</string>
+    <string name="themes_rename">✏️ Renommer</string>
+    <string name="themes_section_title">Thème d’animation</string>
+    <string name="theme_classic_title">AirPods Pro classique</string>
+    <string name="theme_classic_desc">Ouverture du boîtier, sortie des écouteurs et pastille de batterie en haut à droite</string>
+    <string name="theme_victory_title">Grande Victoire</string>
+    <string name="theme_victory_desc">Animation panoramique de victoire, avec sa bande-son percutante</string>
+    <string name="theme_custom_title">Vos propres médias</string>
+    <string name="theme_custom_desc">Utilisez le bouton ci-dessous pour importer une vidéo MP4 ou un fond d’écran HD</string>
+    <string name="theme_import_section_desc">Prend en charge les vidéos MP4 (avec son), les GIF animés, WebP, PNG et JPG</string>
+    <string name="btn_pick_media">🎬 Choisir un média</string>
+    <string name="theme_video_rules_title">🎬 Lecture et fermeture des vidéos</string>
+    <string name="video_dismiss_on_complete">Fermer après une lecture (recommandé)</string>
+    <string name="video_dismiss_timer">Fermer à la fin du compte à rebours (lecture en boucle)</string>
+
+    <!-- Écran Appareils -->
+    <string name="devices_title">🎧 Appareils</string>
+    <string name="devices_subtitle">Gérez vos écouteurs appairés, activez les popups et personnalisez chaque appareil</string>
+    <string name="devices_targets_title">Écouteurs qui déclenchent un popup</string>
+    <string name="devices_targets_desc">Rien ne se déclenche par défaut, seulement les écouteurs que vous activez. Chacun peut avoir son propre contenu.</string>
+    <string name="btn_refresh">Actualiser</string>
+
+    <!-- Écran Réglages -->
+    <string name="settings_title">⚙️ Réglages et permissions</string>
+    <string name="settings_subtitle">Permissions système requises, sortie audio et durée d’affichage du popup</string>
+    <string name="settings_perms_title">🛡️ Permissions requises</string>
+    <string name="settings_perms_desc">Activez ces permissions pour que le popup s’affiche sur l’écran verrouillé, l’accueil ou dans toute app</string>
+    <string name="perm_media_title">Accès aux photos et médias</string>
+    <string name="perm_media_desc">Pour importer des vidéos MP4 et des images locales</string>
+    <string name="perm_oem_title">Écran verrouillé et arrière-plan</string>
+    <string name="perm_oem_desc">Requis sur Xiaomi/OPPO/vivo pour afficher le popup sur l’écran verrouillé et en arrière-plan</string>
+    <string name="settings_bg_title">💡 Garder le service actif</string>
+    <string name="settings_bg_body">Sur les surcouches Android chinoises (Xiaomi HyperOS, Huawei HarmonyOS, OPPO ColorOS, vivo OriginOS), réglez VibePop sur « Aucune restriction » dans Batterie et verrouillez l’app dans les tâches récentes pour que le système ne tue pas le service de surveillance.</string>
+
+    <!-- Accessibilité du popup -->
+    <string name="popup_desc_background">Image d’arrière-plan personnalisée</string>
+    <string name="popup_desc_drag">Glisser vers le bas pour fermer</string>
+    <string name="popup_desc_battery">Niveau de batterie</string>
+    <string name="popup_desc_charging">En charge</string>
+</resources>

@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="⚙️ 设置与权限"
+            android:text="@string/settings_title"
             android:textColor="@color/text_primary"
             android:textSize="22sp"
             android:textStyle="bold" />
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="系统必要权限检测、音频输出模式与弹窗停留时长设置"
+            android:text="@string/settings_subtitle"
             android:textColor="@color/text_secondary"
             android:textSize="12sp" />
 
@@ -51,7 +51,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🛡️ 系统必要权限"
+                    android:text="@string/settings_perms_title"
                     android:textColor="@color/text_primary"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="请确保开启以下必要权限，以保证在锁屏、桌面或应用内均可正常弹出"
+                    android:text="@string/settings_perms_desc"
                     android:textColor="@color/text_secondary"
                     android:textSize="11sp" />
 
@@ -225,7 +225,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="相册与多媒体访问权限"
+                            android:text="@string/perm_media_title"
                             android:textColor="@color/text_primary"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -233,7 +233,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="用于导入本地 MP4 视频与壁纸图片"
+                            android:text="@string/perm_media_desc"
                             android:textColor="@color/text_secondary"
                             android:textSize="11sp" />
                     </LinearLayout>
@@ -273,7 +273,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="锁屏显示与后台弹出权限"
+                            android:text="@string/perm_oem_title"
                             android:textColor="@color/text_primary"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -281,7 +281,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="小米/OPPO/vivo 等系统在锁屏与后台展示弹窗必需"
+                            android:text="@string/perm_oem_desc"
                             android:textColor="@color/text_secondary"
                             android:textSize="11sp" />
                     </LinearLayout>
@@ -291,7 +291,7 @@
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="38dp"
-                        android:text="去设置"
+                        android:text="@string/btn_go_settings"
                         android:textColor="@color/primary"
                         android:textSize="12sp"
                         app:cornerRadius="19dp"
@@ -322,7 +322,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="💡 后台常驻运行建议"
+                    android:text="@string/settings_bg_title"
                     android:textColor="@color/text_primary"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -332,7 +332,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:lineSpacingExtra="2dp"
-                    android:text="国内主流手机系统（小米 HyperOS / 华为 HarmonyOS / OPPO ColorOS / vivo OriginOS）建议在系统「电池与性能」中将 VibePop 设置为「无限制 / 允许完全后台行为」，并在多任务后台中锁定本应用，以防后台监听进程被系统清理。"
+                    android:text="@string/settings_bg_body"
                     android:textColor="@color/text_secondary"
                     android:textSize="11sp" />
 

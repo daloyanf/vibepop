@@ -103,4 +103,77 @@
     <string name="theme_target_global">🌐 全局默认</string>
     <string name="theme_target_device">🎧 %1$s</string>
     <string name="spinner_arrow">%1$s  ▼</string>
+
+    <!-- 列表拼接分隔符 -->
+    <string name="list_separator">、</string>
+
+    <!-- 通知渠道 -->
+    <string name="notification_channel_name">耳机连接监听服务</string>
+    <string name="notification_channel_desc">保持 VibePop 后台耳机弹窗监听服务常驻</string>
+
+    <!-- 底部导航 -->
+    <string name="nav_dashboard">控制台</string>
+    <string name="nav_themes">动效工坊</string>
+    <string name="nav_devices">设备管理</string>
+    <string name="nav_settings">设置/权限</string>
+
+    <!-- 控制台 -->
+    <string name="app_tagline">蓝牙耳机自定义拟真弹窗</string>
+    <string name="cd_app_logo">应用图标</string>
+    <string name="dash_status_ready">服务已就绪</string>
+    <string name="dash_config_hint_title">系统配置提示</string>
+    <string name="dash_click_to_configure">点击立即配置</string>
+    <string name="dash_fix_now">去处理 ›</string>
+    <string name="dash_service_title">耳机连接后台监听</string>
+    <string name="dash_service_sub">开启后当已勾选的蓝牙耳机连接成功时，自动在屏幕底部唤起动效弹窗</string>
+    <string name="dash_preview_title">弹窗预览与控制</string>
+    <string name="dash_preview_sub">实时配置音频路由与停留时长，并一键预览暗黑拟真弹窗效果</string>
+    <string name="dash_force_speaker_title">强制手机扬声器外放声音</string>
+    <string name="dash_force_speaker_desc">即使已连接蓝牙耳机，视频动效声音也优先从手机外放喇叭播放</string>
+    <string name="dash_test_popup">✨ 模拟弹窗一键测试</string>
+    <string name="dash_snapshot_title">当前配置速览</string>
+    <string name="dash_snapshot_theme">生效主题</string>
+    <string name="dash_snapshot_target">响应目标</string>
+
+    <!-- 动效工坊 -->
+    <string name="themes_title">🎨 动效工坊</string>
+    <string name="themes_popup_name">弹窗显示名称</string>
+    <string name="themes_rename">✏️ 重命名</string>
+    <string name="themes_section_title">动效主题</string>
+    <string name="theme_classic_title">经典 AirPods Pro</string>
+    <string name="theme_classic_desc">拟真开盖、耳机出仓动效与右上角电量指示</string>
+    <string name="theme_victory_title">伟大胜利</string>
+    <string name="theme_victory_desc">全景高光胜利动效（自带震撼原声音效）</string>
+    <string name="theme_custom_title">本地多媒体导入</string>
+    <string name="theme_custom_desc">点击下方按钮导入 MP4 视频或高清壁纸</string>
+    <string name="theme_import_section_desc">支持 MP4 视频（可带原声音效）、GIF 动图、WebP、PNG、JPG</string>
+    <string name="btn_pick_media">🎬 从相册选择视频 / 图片 / 动图</string>
+    <string name="theme_video_rules_title">🎬 视频播放与关闭规则</string>
+    <string name="video_dismiss_on_complete">单次播放完毕后自动关闭（推荐）</string>
+    <string name="video_dismiss_timer">固定倒计时关闭（循环播放直至计时结束）</string>
+
+    <!-- 设备管理 -->
+    <string name="devices_title">🎧 设备管理</string>
+    <string name="devices_subtitle">管理已配对的蓝牙耳机，开启弹窗响应并配置专属动效</string>
+    <string name="devices_targets_title">目标耳机响应列表</string>
+    <string name="devices_targets_desc">默认全不响应，仅对已开启的耳机触发弹窗；可为每个耳机单独定制专属内容</string>
+    <string name="btn_refresh">刷新列表</string>
+
+    <!-- 设置与权限 -->
+    <string name="settings_title">⚙️ 设置与权限</string>
+    <string name="settings_subtitle">系统必要权限检测、音频输出模式与弹窗停留时长设置</string>
+    <string name="settings_perms_title">🛡️ 系统必要权限</string>
+    <string name="settings_perms_desc">请确保开启以下必要权限，以保证在锁屏、桌面或应用内均可正常弹出</string>
+    <string name="perm_media_title">相册与多媒体访问权限</string>
+    <string name="perm_media_desc">用于导入本地 MP4 视频与壁纸图片</string>
+    <string name="perm_oem_title">锁屏显示与后台弹出权限</string>
+    <string name="perm_oem_desc">小米/OPPO/vivo 等系统在锁屏与后台展示弹窗必需</string>
+    <string name="settings_bg_title">💡 后台常驻运行建议</string>
+    <string name="settings_bg_body">国内主流手机系统（小米 HyperOS / 华为 HarmonyOS / OPPO ColorOS / vivo OriginOS）建议在系统「电池与性能」中将 VibePop 设置为「无限制 / 允许完全后台行为」，并在多任务后台中锁定本应用，以防后台监听进程被系统清理。</string>
+
+    <!-- 弹窗无障碍描述 -->
+    <string name="popup_desc_background">自定义背景图</string>
+    <string name="popup_desc_drag">下拉收起</string>
+    <string name="popup_desc_battery">电量</string>
+    <string name="popup_desc_charging">充电中</string>
 </resources>
